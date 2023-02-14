@@ -1,6 +1,8 @@
 ---
 layout: post
-title: happy valentine's day
+title: Happy Valentine's Day!
+author: yucheng YAN
+tags: ["monument","life"]
 ---  
 # Welcome !
-today is my first day with **you** >3<  
+Today is my first day with **you** >3<  
