@@ -1,8 +1,11 @@
 ---
-layout: post
+layout: default
 title: Happy Valentine's Day!
 author: yucheng YAN
 tags: ["monument","life"]
 ---  
 # Welcome !
-Today is my first day with **you** >3<  
+Today is my first day with **you** >3<   
+
+[back](/)
+

@@ -1,4 +1,10 @@
+title: grot's blog
+logo: /assets/img/pngwing.com.png
+description: A MTG player ,a coder and a lover.
+show_downloads: true
+google_analytics:
 theme: jekyll-theme-minimal
-title:  yucheng's blog
-description: Bookmark this to keep an eye on my project updates!
-logo: /assets/mygoodface.png
+github:
+  zip_url: http://example.com/download.zip
+  another_url: another value
+  repository_url: https://github.com/grot666/grot666.github.io
