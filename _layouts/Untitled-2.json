@@ -1,0 +1,137 @@
+{
+   "node":[
+      {
+         "id":"8a0380a8864ed25901864f663a2b001b",
+         "processId":"8a0380a8864ed25901864f663a210019",
+         "type":"MASTER_NODE",
+         "nodeCondition":null,
+         "prevNodeId":"",
+         "nextNodeId":"",
+         "approverEmail":"yucheng.yan@philips.com",
+         "approverRole":"Value stream owner",
+         "latestResult":0,
+         "latestHandleTimeStamp":null,
+         "latestRemark":null,
+         "serialNumber":0,
+         "active":1
+      }
+   ],
+   "project":{
+      "ecRemark":null,
+      "closer":null,
+      "closeTimeStamp":0,
+      "reviewingEdits":1,
+      "id":"8a00879986341835018634b014bb003c",
+      "name":"test API",
+      "owner":{
+         "id":"8a0088f08268095801833607da91005f",
+         "name":"YAN",
+         "firstName":"Yu Cheng",
+         "fullName":"Yu Cheng YAN",
+         "email":"yucheng.yan@philips.com",
+         "ldapUserId":null,
+         "orgName":"CC/PH_test",
+         "isEcOfficer":0,
+         "code1":"320125905",
+         "itopUserId":4222,
+         "itopFunction":"DepartmentHead"
+      },
+      "description":"test ",
+      "available":true,
+      "ecClassification":0,
+      "ecReviewed":1,
+      "valueStream":"PJ- 006187 Security & privacy standardization",
+      "editable":true,
+      "status":null,
+      "department":"CC/PH_test",
+      "contributors":[
+         {
+            "id":"8a0088f08268095801833607da91005f",
+            "name":"YAN",
+            "firstName":"Yu Cheng",
+            "fullName":"Yu Cheng YAN",
+            "email":"yucheng.yan@philips.com",
+            "ldapUserId":null,
+            "orgName":"CC/PH_test",
+            "isEcOfficer":0,
+            "code1":"320125905",
+            "itopUserId":4222,
+            "itopFunction":"DepartmentHead"
+         }
+      ],
+      "approval":{
+         "node":[
+            {
+               "id":"8a00879986341835018634b014c1003f",
+               "processId":"8a00879986341835018634b014bf003d",
+               "type":"MASTER_NODE",
+               "nodeCondition":null,
+               "prevNodeId":"",
+               "nextNodeId":"8a00879986341835018634b0151e0040",
+               "approverEmail":"yucheng.yan@philips.com",
+               "approverRole":"Project Owner",
+               "latestResult":1,
+               "latestHandleTimeStamp":1675921402896,
+               "latestRemark":null,
+               "serialNumber":0,
+               "active":2
+            },
+            {
+               "id":"8a00879986341835018634b0151e0040",
+               "processId":"8a00879986341835018634b014bf003d",
+               "type":"MASTER_NODE",
+               "nodeCondition":null,
+               "prevNodeId":"8a00879986341835018634b014c1003f",
+               "nextNodeId":"",
+               "approverEmail":"yucheng.yan@philips.com",
+               "approverRole":"Value Stream Owner",
+               "latestResult":1,
+               "latestHandleTimeStamp":1675921402900,
+               "latestRemark":null,
+               "serialNumber":1,
+               "active":2
+            }
+         ],
+         "process":{
+            "id":"8a00879986341835018634b014bf003d",
+            "title":"Project Creation Request: test API",
+            "requesterEmail":"yucheng.yan@philips.com",
+            "requesterFullName":"Yu Cheng YAN",
+            "requestTimeStamp":1675921200319,
+            "status":1,
+            "wfId":"66dc259a81d73abc0181d73c01110000",
+            "currentNodeId":"8a00879986341835018634b014c1003f",
+            "content":"test ",
+            "requestType":null,
+            "projectId":"8a00879986341835018634b014bb003c",
+            "datasetId":null
+         }
+      }
+   },
+   "process":{
+      "requesterEmail":"yucheng.yan@philips.com",
+      "requestTimeStamp":"1676369345057",
+      "content":{
+         "repository":{
+            "gitRepoId":"philips-validation/test-api",
+            "gitRepoUrl":"https://github-china.code1.emi.philips.com/philips-validation/test-api",
+            "change":{
+               "add":[
+                  
+               ],
+               "modify":[
+                  {
+                     "permissionTo":"write",
+                     "permissionFrom":"read",
+                     "userEmail":"zhongqi.shi@philips.com"
+                  }
+               ],
+               "remove":[
+                  
+               ]
+            }
+         }
+      },
+      "requesterFullName":"Yu Cheng YAN"
+   }
+}
