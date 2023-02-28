@@ -2,9 +2,13 @@
 layout: default
 ---
 
-Text can be **bold**, _italic_, or ~~strikethrough~~.
+[Contact Me](./about/contact-me.md).  
+<ul>
+  <li>
 
-[Link to another page](./another-page.html).
+  </li>
+</ul>
+
 <ul>
   {% for post in site.posts %}
     <li>
