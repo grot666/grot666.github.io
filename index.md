@@ -2,13 +2,6 @@
 layout: default
 ---
 
-[Contact Me](./about/contact-me.md).  
-<ul>
-  <li>
-
-  </li>
-</ul>
-
 <ul>
   {% for post in site.posts %}
     <li>
