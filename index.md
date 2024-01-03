@@ -2,10 +2,14 @@
 layout: default
 ---
 
+
 <ul>
   {% for post in site.posts %}
     <li>
-      <a href="{{ post.url }}">{{ post.title }} <small>tags: <em>{{ post.tags | join: "</em> - <em>" }}</em></small></a>
+      <strong>{{ forloop.index }}.</strong>
+      <a href="{{ post.url }}">{{ post.title }}</a>
+      <small>tags: <em>{{ post.tags | join: "</em> - <em>" }}</em></small>
+      <small>date: <em>{{ post.date | date: "%-d %B %Y" }}</em></small>
     </li>
   {% endfor %}
 </ul>

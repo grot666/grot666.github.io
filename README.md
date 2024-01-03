@@ -1,5 +1,5 @@
 ---
-permalink: /index.html
+layout: default
 ---
 # The Minimal theme
 

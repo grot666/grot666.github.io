@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Cryptographic 101 | grot’s blog</title>
+<meta name="generator" content="Jekyll v4.3.2" />
+<meta property="og:title" content="Cryptographic 101" />
+<meta name="author" content="yucheng YAN" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="hash function. 具体而言，一个理想的加密哈希函数，应当具有如下属性：" />
+<meta property="og:description" content="hash function. 具体而言，一个理想的加密哈希函数，应当具有如下属性：" />
+<link rel="canonical" href="http://localhost:4000/2023/02/15/mtg-creativity.html" />
+<meta property="og:url" content="http://localhost:4000/2023/02/15/mtg-creativity.html" />
+<meta property="og:site_name" content="grot’s blog" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2023-02-15T00:00:00+08:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Cryptographic 101" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"yucheng YAN"},"dateModified":"2023-02-15T00:00:00+08:00","datePublished":"2023-02-15T00:00:00+08:00","description":"hash function. 具体而言，一个理想的加密哈希函数，应当具有如下属性：","headline":"Cryptographic 101","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2023/02/15/mtg-creativity.html"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"http://localhost:4000/assets/img/pngwing.com.png"},"name":"yucheng YAN"},"url":"http://localhost:4000/2023/02/15/mtg-creativity.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <!--[if lt IE 9]>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <![endif]-->
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1><a href="http://localhost:4000/">grot's blog</a></h1>
+
+        
+          <img src="/assets/img/pngwing.com.png" alt="Logo" />
+        
+
+        <p>A MTG player ,a coder and a lover.</p>
+
+        
+
+        
+
+        
+      </header>
+      <section>
+
+      <small>15 February 2023</small>
+<h1>Cryptographic 101</h1>
+
+<p class="view">by yucheng YAN</p>
+<a href="/">Back to index</a>
+<h1 id="hash-function">hash function.</h1>
+<h1 id="具体而言一个理想的加密哈希函数应当具有如下属性">具体而言，一个理想的加密哈希函数，应当具有如下属性：</h1>
+
+<p>快速：计算速度要足够快
+ 确定性：对同样的输入，应该总是产生同样的输出
+ 难以分析：对输入的任何微小改动，都应该使输出完全发生变化
+ 不可逆：从其哈希值逆向演算出输入值应该是不可行的。这意味着没有比暴力破解更好的破解方法
+ 无碰撞：找到具有相同哈希值的两条不同消息应该非常困难（或几乎不可能）</p>
+
+<h1 id="用途">用途</h1>
+<p>1.校验完整性 计算文件的 Hash 如果一样则说明文件没有损坏
+ 2.保存密码 把密码用hash 存起来，而不是明文
+ 3.生成ID 和随机数</p>
+
+<p>test</p>
+
+<p><a href="/">back</a></p>
+
+<a href="/">Back to index</a>
+<br>
+
+  <small>tags: <em>Cryptograph</em> - <em>learning</em> - <em>python</em></small>
+
+
+
+
+      </section>
+      <footer>
+        
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="/assets/js/scale.fix.js"></script>
+  </body>
+</html>
