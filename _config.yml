@@ -1,6 +1,6 @@
-title: grot's blog
+title: CIRCUIT 回路
 logo: /assets/img/pngwing.com.png
-description: A MTG player ,a coder and a lover.
+description: Circuit is a blog that explores the intersection of DevOps and computational complexity. Inspired by the famous NP-complete problems of Directed Hamilton circuit and Undirected Hamilton circuit, Circuit aims to share practical DevOps knowledge and insights with a touch of theoretical elegance and rigor. Whether you are a developer, an operator, or a curious learner, Circuit will help you navigate the challenges and opportunities of DevOps in a complex and dynamic world. Join Circuit and discover the beauty and power of DevOps.
 show_downloads: false
 google_analytics:
 theme: jekyll-theme-minimal
