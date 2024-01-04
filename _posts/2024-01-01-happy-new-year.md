@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: post
 title: Happy new year!
 author: yucheng YAN
 tags: ["monument","life"]
