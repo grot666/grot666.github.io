@@ -20,4 +20,3 @@ tags: ["Cryptograph","learning","python"]
 
 test
 
-[back](/)

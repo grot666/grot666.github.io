@@ -4,10 +4,15 @@ title: note all useful dev tool
 author: yucheng YAN
 tags: ["java","dev","tools"]
 ---    
-1. SDKman 
-2. spring-boot CLI
-3. Intellij IDEA
-4. DB-related 
+<!-- checkbox -->
+## java dev tools
+checklist for java dev tools
+
+1. [x]  SDKman 
+2. [ ] spring-boot CLI 
+3. [ ] Intellij IDEA 
+4. [ ] DB-related 
+
 
 ## SDKman  
 install sdk and base commands  
@@ -64,7 +69,5 @@ now ,you got a powerful kit control tool ,try to install spring-boot cli using i
 
 
 
-
-[back](/)
 
 

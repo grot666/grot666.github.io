@@ -1,10 +1,10 @@
 ---
 layout: default
-title: Happy Valentine's Day!
+title: Happy new year!
 author: yucheng YAN
 tags: ["monument","life"]
 ---  
-# Welcome !
-Today is my first day with **you** >3<   
-[back](/)
+
+how time flies! 2024!!!  
+
 
