@@ -4,19 +4,38 @@ title: Cryptographic 101
 author: yucheng YAN
 tags: ["Cryptograph","learning","python"]
 ---    
-# hash function.
-# 具体而言，一个理想的加密哈希函数，应当具有如下属性：
 
- 快速：计算速度要足够快
- 确定性：对同样的输入，应该总是产生同样的输出
- 难以分析：对输入的任何微小改动，都应该使输出完全发生变化
- 不可逆：从其哈希值逆向演算出输入值应该是不可行的。这意味着没有比暴力破解更好的破解方法
- 无碰撞：找到具有相同哈希值的两条不同消息应该非常困难（或几乎不可能）
+### Cryptographic 101
+for a developer following keywords are important for you to understand cryptographic.
+### hash function. 哈希函数
+- 一个输入对应一个输出
+- 不能从输出反推输入
+- 不能两个输入对应一个输出
+- 不能修改输入得到相同的输出
 
-# 用途
- 1.校验完整性 计算文件的 Hash 如果一样则说明文件没有损坏
- 2.保存密码 把密码用hash 存起来，而不是明文
- 3.生成ID 和随机数
+#### 用途
+- 用于校验完整性
+- 用于保存密码
+- 用于生成ID 和随机数
 
-test
+#### 常见的哈希函数
+- MD5
+- SHA1
+- SHA256
+- SHA512
+- RIPEMD160
+
+#### 算法实现
+```python
+import hashlib
+m = hashlib.md5()
+m.update(b"Nobody inspects")
+m.update(b" the spammish repetition")
+m.digest()
+m.hexdigest()
+```
+
+### MAC Codes. 消息认证码
+  
+
 
