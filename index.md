@@ -9,6 +9,7 @@ layout: default
   <li><a href="/chess-tactics-trainer/">Chess Tactics Trainer · 国际象棋战术训练</a> <small>国际象棋战术训练 Web 应用</small></li>
   <li><a href="/middle-earth-atlas/">Middle-earth Interactive Atlas</a> <small>Interactive Middle-earth atlas with geography, history and politics across the Ages</small></li>
   <li><a href="/next-shore/">Next Shore · 彼岸</a> <small>A calm self-assessment for early-career professionals curious about working abroad</small></li>
+  <li><a href="/Petit/">Petit · 小玩意儿</a> <small>Small fun things · 生成艺术画廊 + 小游戏合集（2048、贪吃蛇、扫雷、Dual N-Back 等）</small></li>
   <li><a href="/pose-lab-spike/">POSE LAB</a> <small>In-browser realtime pose detection with MediaPipe (Vite + TS + three.js)</small></li>
   <li><a href="/waypoint/">Waypoint · 途径</a> <small>Bilingual immigration pathways atlas · 移民路径地图册</small></li>
   <li><a href="/zuofansong/">做饭松 · 粗粮减脂厨房</a> <small>Fat-loss meal-planning web app · 粗粮减脂餐计划</small></li>
