@@ -38,7 +38,7 @@
         <span class="legend-title">连线</span>
         <span class="line-sample" aria-hidden="true"></span><span class="legend-text">前置（仅 T0→T1）</span>
       </div>
-      <p class="legend-rules"><b>T0/T1</b> 消耗技能点学习 · <b>T2</b> 满足传承的属性需求，从传承来源习得 · <b>超能力</b> 天生</p>
+      <p class="legend-rules"><b>T0/T1</b> 消耗技能点学习 · <b>T2</b> 满足传承的属性需求，从传承来源习得 · <b>超能力</b> 来源多样：天生、变异、辐射、改造…（卡片上的小徽章）</p>
       <p class="legend-note"><span class="bolt" aria-hidden="true">⚡</span>凡人无法使用消耗能量的技能</p>
     </div>
   </details>
@@ -59,11 +59,17 @@
         </div>
         <div class="col" data-col="T2">
           <div class="col-head-wrap"><h2 class="col-head"><span class="col-tag">T2</span>传承<small>LINEAGE</small></h2>
-            <div class="t2-tools" role="group" aria-label="传承分组"><button type="button" data-all="expand">全部展开</button><button type="button" data-all="collapse">全部折叠</button></div></div>
+            <div class="t2-tools" role="group" aria-label="传承分组"><button type="button" data-all="expand" data-tier="T2">全部展开</button><button type="button" data-all="collapse" data-tier="T2">全部折叠</button></div></div>
           <div class="col-body" id="col-T2"></div>
         </div>
         <div class="col" data-col="P">
-          <div class="col-head-wrap"><h2 class="col-head"><span class="col-tag">P</span>超能力<small>SUPERPOWERS</small></h2></div>
+          <div class="col-head-wrap"><h2 class="col-head"><span class="col-tag">P</span>超能力<small>SUPERPOWERS</small></h2>
+            <div class="t2-tools" role="group" aria-label="超能力分组"><button type="button" data-all="expand" data-tier="P">全部展开</button><button type="button" data-all="collapse" data-tier="P">全部折叠</button></div></div>
+          <div class="origin-filter-wrap">
+            <div class="of-title">按能力来源筛选</div>
+            <div class="origin-filter" id="origin-filter" role="group" aria-label="按能力来源筛选超能力"></div>
+            <p class="of-status" id="origin-filter-status" aria-live="polite"></p>
+          </div>
           <div class="col-body" id="col-P"></div>
         </div>
         <section class="states">
@@ -84,7 +90,7 @@
 
   <aside class="panel" id="panel" aria-live="polite" aria-label="技能详情">
     <div class="panel-empty" id="panel-empty">
-      <div class="bubble"><span class="hint-mouse">把鼠标移到技能卡上预览详情，<br>点击可以固定选中。<br>点击传承的「传承来源」查看属性需求。</span><span class="hint-touch">点击技能卡查看详情，点空白处取消。</span></div>
+      <div class="bubble"><span class="hint-mouse">把鼠标移到技能卡上预览详情，<br>点击可以固定选中。<br>点击传承的「传承来源」查看属性需求，<br>点击超能力的来源徽章查看获得方式与代价。</span><span class="hint-touch">点击技能卡查看详情，点空白处取消。</span></div>
       <p class="panel-tips">键盘：Tab 切换技能，Enter 固定，Esc 取消。<br>详情里的技能名可以点击跳转。</p>
     </div>
     <div class="panel-detail" id="panel-detail" hidden></div>

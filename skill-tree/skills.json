@@ -233,19 +233,148 @@
   "power_groups": {
     "physical": {
       "name_zh": "体能强化",
-      "name_en": "Physical"
+      "name_en": "Physical",
+      "desc": "身体素质本身被推到超越人类的极限。"
     },
     "projection": {
       "name_zh": "能量投射",
-      "name_en": "Projection"
+      "name_en": "Projection",
+      "desc": "把体内能量向外释放。"
     },
     "elemental": {
-      "name_zh": "元素",
-      "name_en": "Elemental"
+      "name_zh": "元素操控",
+      "name_en": "Elemental",
+      "desc": "驱使冰、火、雷等自然力量。"
     },
     "psychic": {
       "name_zh": "精神",
-      "name_en": "Psychic"
+      "name_en": "Psychic",
+      "desc": "以精神直接影响物体与他人的心智。"
+    },
+    "senses": {
+      "name_zh": "超感官",
+      "name_en": "Senses",
+      "desc": "看见、听见、预感常人察觉不到的东西。",
+      "default_collapsed": true
+    },
+    "life": {
+      "name_zh": "生命",
+      "name_en": "Vitality",
+      "desc": "操控自身或他人的生命力。",
+      "default_collapsed": true
+    },
+    "transform": {
+      "name_zh": "变形",
+      "name_en": "Transformation",
+      "desc": "改变自己身体的形态、大小或物质状态。",
+      "default_collapsed": true
+    },
+    "spatial": {
+      "name_zh": "时空",
+      "name_en": "Spatial",
+      "desc": "扭曲空间与时间。",
+      "default_collapsed": true
+    }
+  },
+  "power_origins": {
+    "innate": {
+      "name_zh": "天生",
+      "name_en": "Innate",
+      "abbr": "天",
+      "color": "#ffd166",
+      "innate": true,
+      "desc": "生来就有，从记事起就会用，像呼吸一样自然。",
+      "how": "出生即拥有，无法后天获得，也无法传给别人。",
+      "drawback": "没有额外代价，但无法学习、转移或强化来源。",
+      "icon": "images/svg/origin_innate.svg"
+    },
+    "mutant": {
+      "name_zh": "基因变异",
+      "name_en": "Mutant",
+      "abbr": "变",
+      "color": "#ff5fa2",
+      "innate": true,
+      "desc": "能力写在基因里，平时沉睡，在青春期或极端压力下突然觉醒。",
+      "how": "先天潜伏，在一次「觉醒事件」（生死危机、强烈情绪）中显现；无法后天注入。",
+      "drawback": "觉醒初期难以控制，常伴随外貌异变，容易被社会排斥。",
+      "icon": "images/svg/origin_mutant.svg"
+    },
+    "alien": {
+      "name_zh": "外星血统",
+      "name_en": "Alien",
+      "abbr": "星",
+      "color": "#5fd3ff",
+      "innate": true,
+      "desc": "身体本就不是地球人，能力来自异星生理结构。",
+      "how": "与生俱来；只有流着异星之血的人才拥有。",
+      "drawback": "依赖特定环境（如恒星光照）充能，对故乡的某种矿石极度虚弱。",
+      "icon": "images/svg/origin_alien.svg"
+    },
+    "radiation": {
+      "name_zh": "辐射事故",
+      "name_en": "Accident",
+      "abbr": "辐",
+      "color": "#9dff3a",
+      "innate": false,
+      "desc": "实验室爆炸、宇宙射线、被辐射生物咬伤——一场意外改写了身体。",
+      "how": "一次性事故事件获得，过程几乎无法复制。",
+      "drawback": "能力常与情绪绑定而失控，身体留下慢性后遗症。",
+      "icon": "images/svg/origin_radiation.svg"
+    },
+    "augment": {
+      "name_zh": "科学改造",
+      "name_en": "Augmented",
+      "abbr": "改",
+      "color": "#c0c8d8",
+      "innate": false,
+      "desc": "超级士兵血清、手术植入、机械义体——由科学一步步造出来的超人。",
+      "how": "通过注射血清、手术或植入装置获得；需要实验室和大量资源。",
+      "drawback": "血清不稳定需定期补剂，义体需维护充电，害怕电磁脉冲。",
+      "icon": "images/svg/origin_augment.svg"
+    },
+    "mystic": {
+      "name_zh": "魔法仪式",
+      "name_en": "Mystic",
+      "abbr": "魔",
+      "color": "#b388ff",
+      "innate": false,
+      "desc": "研读禁书、完成古老仪式，从异界借来力量。",
+      "how": "通过学习咒语、完成仪式获得；需要导师或典籍。",
+      "drawback": "施法需要咒语与手势，消耗精神；仪式往往要付出等价之物。",
+      "icon": "images/svg/origin_mystic.svg"
+    },
+    "divine": {
+      "name_zh": "神赐契约",
+      "name_en": "Divine / Pact",
+      "abbr": "神",
+      "color": "#ffe45c",
+      "innate": false,
+      "desc": "被神灵选中，或与恶魔立下契约，力量由更高存在授予。",
+      "how": "由神祇或契约对象授予；可能需要一句咒语或一件信物。",
+      "drawback": "必须遵守誓约，一旦违背，力量会被收回，甚至招致惩罚。",
+      "icon": "images/svg/origin_divine.svg"
+    },
+    "symbiote": {
+      "name_zh": "共生体",
+      "name_en": "Symbiote",
+      "abbr": "生",
+      "color": "#a3a3c2",
+      "innate": false,
+      "desc": "一种活着的外来生物与宿主结合，互相供养。",
+      "how": "与共生体接触并被它接纳；共生体也可能离开、换宿主。",
+      "drawback": "怕声波与高温，宿主会逐渐被它的饥饿和情绪侵蚀。",
+      "icon": "images/svg/origin_symbiote.svg"
+    },
+    "cosmic": {
+      "name_zh": "宇宙神器",
+      "name_en": "Cosmic Artifact",
+      "abbr": "器",
+      "color": "#7cf5c8",
+      "innate": false,
+      "desc": "戒指、宝石、权杖——来自宇宙的神器选中了你。",
+      "how": "被神器选中或夺得神器；力量随神器而来，也随神器而去。",
+      "drawback": "神器有能量上限需要充能，意志不足会失效，还可能被夺走。",
+      "icon": "images/svg/origin_cosmic.svg"
     }
   },
   "skills": [
@@ -1117,7 +1246,13 @@
       "type": "passive",
       "desc": "远超人类极限的力量，所有物理攻击伤害大幅提升。",
       "requires": [],
-      "icon": "images/svg/super_strength.svg"
+      "icon": "images/svg/super_strength.svg",
+      "origin": [
+        "innate",
+        "augment",
+        "radiation"
+      ],
+      "drawback": "力量随情绪波动，盛怒时难以收手。"
     },
     {
       "id": "invulnerability",
@@ -1129,7 +1264,12 @@
       "energy_cost": "吸收伤害时消耗",
       "desc": "身体近乎无法被伤害，吸收的伤害会转化为能量消耗。",
       "requires": [],
-      "icon": "images/svg/invulnerability.svg"
+      "icon": "images/svg/invulnerability.svg",
+      "origin": [
+        "alien",
+        "divine",
+        "innate"
+      ]
     },
     {
       "id": "super_speed",
@@ -1141,7 +1281,12 @@
       "energy_cost": "持续",
       "desc": "以超越感知的速度移动，周围的一切仿佛静止。",
       "requires": [],
-      "icon": "images/svg/super_speed.svg"
+      "icon": "images/svg/super_speed.svg",
+      "origin": [
+        "radiation",
+        "mutant"
+      ],
+      "drawback": "新陈代谢极快，必须大量进食。"
     },
     {
       "id": "flight",
@@ -1153,7 +1298,12 @@
       "energy_cost": "持续",
       "desc": "无需任何装置即可自由飞行。",
       "requires": [],
-      "icon": "images/svg/flight.svg"
+      "icon": "images/svg/flight.svg",
+      "origin": [
+        "alien",
+        "mutant",
+        "cosmic"
+      ]
     },
     {
       "id": "heat_vision",
@@ -1165,7 +1315,12 @@
       "energy_cost": 30,
       "desc": "双眼射出高温光束。",
       "requires": [],
-      "icon": "images/svg/heat_vision.svg"
+      "icon": "images/svg/heat_vision.svg",
+      "origin": [
+        "alien",
+        "mutant"
+      ],
+      "drawback": "连续使用会让双眼灼痛，短时间视线模糊。"
     },
     {
       "id": "energy_shield",
@@ -1177,7 +1332,11 @@
       "energy_cost": "持续",
       "desc": "在身体周围展开半透明的能量球体，抵挡攻击。",
       "requires": [],
-      "icon": "images/svg/energy_shield.svg"
+      "icon": "images/svg/energy_shield.svg",
+      "origin": [
+        "cosmic",
+        "augment"
+      ]
     },
     {
       "id": "power_burst",
@@ -1189,7 +1348,12 @@
       "energy_cost": "全部",
       "desc": "仅在过载状态下可用，释放全部能量产生巨大冲击。",
       "requires": [],
-      "icon": "images/svg/power_burst.svg"
+      "icon": "images/svg/power_burst.svg",
+      "origin": [
+        "radiation",
+        "cosmic"
+      ],
+      "drawback": "释放后能量清空，下一回合无法使用超能力。"
     },
     {
       "id": "freeze_breath",
@@ -1201,7 +1365,11 @@
       "energy_cost": 25,
       "desc": "呼出极寒气流，冻结前方的目标。",
       "requires": [],
-      "icon": "images/svg/freeze_breath.svg"
+      "icon": "images/svg/freeze_breath.svg",
+      "origin": [
+        "alien",
+        "mutant"
+      ]
     },
     {
       "id": "telekinesis",
@@ -1213,7 +1381,284 @@
       "energy_cost": 40,
       "desc": "用意念移动物体或控制对手的行动。",
       "requires": [],
-      "icon": "images/svg/telekinesis.svg"
+      "icon": "images/svg/telekinesis.svg",
+      "origin": [
+        "mutant",
+        "mystic"
+      ],
+      "drawback": "过度使用会流鼻血、剧烈头痛。"
+    },
+    {
+      "id": "pyrokinesis",
+      "name_zh": "火焰操控",
+      "name_en": "Pyrokinesis",
+      "tier": "P",
+      "power_group": "elemental",
+      "type": "active",
+      "energy_cost": 25,
+      "origin": [
+        "mutant",
+        "mystic"
+      ],
+      "drawback": "体温过高，连续使用需要冷却一回合。",
+      "desc": "点燃空气中的热量，让火焰随手势翻卷。",
+      "requires": [],
+      "icon": "images/svg/pyrokinesis.svg"
+    },
+    {
+      "id": "lightning_call",
+      "name_zh": "召雷",
+      "name_en": "Lightning Call",
+      "tier": "P",
+      "power_group": "elemental",
+      "type": "active",
+      "energy_cost": 35,
+      "origin": [
+        "divine",
+        "radiation"
+      ],
+      "drawback": "在雨中使用会连带电到自己。",
+      "desc": "举手召来雷霆，劈中远处的目标。",
+      "requires": [],
+      "icon": "images/svg/lightning_call.svg"
+    },
+    {
+      "id": "mind_reading",
+      "name_zh": "读心",
+      "name_en": "Mind Reading",
+      "tier": "P",
+      "power_group": "psychic",
+      "type": "active",
+      "energy_cost": 15,
+      "origin": [
+        "mutant",
+        "mystic"
+      ],
+      "drawback": "人多的地方会被杂念淹没，头痛欲裂。",
+      "desc": "读取对手此刻的念头，提前看穿他下一回合的出招。",
+      "requires": [],
+      "icon": "images/svg/mind_reading.svg"
+    },
+    {
+      "id": "illusion",
+      "name_zh": "幻象",
+      "name_en": "Illusion",
+      "tier": "P",
+      "power_group": "psychic",
+      "type": "active",
+      "energy_cost": 30,
+      "origin": [
+        "mystic",
+        "divine"
+      ],
+      "drawback": "对机器和意志极强的人无效。",
+      "desc": "在对手脑中制造以假乱真的幻影。",
+      "requires": [],
+      "icon": "images/svg/illusion.svg"
+    },
+    {
+      "id": "xray_vision",
+      "name_zh": "透视",
+      "name_en": "X-Ray Vision",
+      "tier": "P",
+      "power_group": "senses",
+      "type": "active",
+      "energy_cost": 10,
+      "origin": [
+        "alien",
+        "augment"
+      ],
+      "drawback": "无法穿透铅。",
+      "desc": "目光穿透墙壁与衣物，看清隐藏的武器和弱点。",
+      "requires": [],
+      "icon": "images/svg/xray_vision.svg"
+    },
+    {
+      "id": "danger_sense",
+      "name_zh": "危险预感",
+      "name_en": "Danger Sense",
+      "tier": "P",
+      "power_group": "senses",
+      "type": "passive",
+      "origin": [
+        "radiation",
+        "mutant",
+        "innate"
+      ],
+      "drawback": "嘈杂环境下会持续耳鸣。",
+      "desc": "危险来临前头皮发麻，总能提前半拍闪避。",
+      "requires": [],
+      "icon": "images/svg/danger_sense.svg"
+    },
+    {
+      "id": "healing_factor",
+      "name_zh": "自愈因子",
+      "name_en": "Healing Factor",
+      "tier": "P",
+      "power_group": "life",
+      "type": "passive",
+      "energy_cost": "受伤时消耗",
+      "origin": [
+        "mutant",
+        "augment",
+        "symbiote"
+      ],
+      "drawback": "细胞代谢极快，需要大量进食，衰老与疼痛并不会消失。",
+      "desc": "伤口在几秒内愈合，每回合自动恢复体力。",
+      "requires": [],
+      "icon": "images/svg/healing_factor.svg"
+    },
+    {
+      "id": "life_drain",
+      "name_zh": "生命汲取",
+      "name_en": "Life Drain",
+      "tier": "P",
+      "power_group": "life",
+      "type": "active",
+      "energy_cost": 30,
+      "origin": [
+        "mystic",
+        "symbiote"
+      ],
+      "drawback": "会吸进对方的记忆碎片，意志逐渐动摇。",
+      "desc": "触碰对手，把他的生命力转为自己的体力。",
+      "requires": [],
+      "icon": "images/svg/life_drain.svg"
+    },
+    {
+      "id": "regeneration",
+      "name_zh": "断肢再生",
+      "name_en": "Regeneration",
+      "tier": "P",
+      "power_group": "life",
+      "type": "ultimate",
+      "energy_cost": "全部",
+      "origin": [
+        "symbiote",
+        "mutant"
+      ],
+      "drawback": "再生的一回合内完全无法行动。",
+      "desc": "濒死时整个身体重新长出，满状态复活一次。",
+      "requires": [],
+      "icon": "images/svg/regeneration.svg"
+    },
+    {
+      "id": "elastic_body",
+      "name_zh": "弹性身体",
+      "name_en": "Elastic Body",
+      "tier": "P",
+      "power_group": "transform",
+      "type": "active",
+      "energy_cost": 15,
+      "origin": [
+        "radiation",
+        "mutant"
+      ],
+      "drawback": "低温下身体会变脆。",
+      "desc": "四肢像橡胶一样伸长，远距离抓取与抽打。",
+      "requires": [],
+      "icon": "images/svg/elastic_body.svg"
+    },
+    {
+      "id": "size_shift",
+      "name_zh": "体型变化",
+      "name_en": "Size Shift",
+      "tier": "P",
+      "power_group": "transform",
+      "type": "active",
+      "energy_cost": 30,
+      "origin": [
+        "augment",
+        "radiation"
+      ],
+      "drawback": "变大后动作迟缓，变小后力量也随之下降。",
+      "desc": "缩小到昆虫大小钻过缝隙，或变成巨人横扫全场。",
+      "requires": [],
+      "icon": "images/svg/size_shift.svg"
+    },
+    {
+      "id": "phasing",
+      "name_zh": "相位穿透",
+      "name_en": "Phasing",
+      "tier": "P",
+      "power_group": "transform",
+      "type": "active",
+      "energy_cost": "持续",
+      "origin": [
+        "radiation",
+        "augment"
+      ],
+      "drawback": "相位状态下自己也无法攻击。",
+      "desc": "让身体的分子与周围错开，攻击和墙壁都会穿身而过。",
+      "requires": [],
+      "icon": "images/svg/phasing.svg"
+    },
+    {
+      "id": "symbiote_suit",
+      "name_zh": "共生战甲",
+      "name_en": "Symbiote Suit",
+      "tier": "P",
+      "power_group": "transform",
+      "type": "active",
+      "energy_cost": "持续",
+      "origin": [
+        "symbiote"
+      ],
+      "drawback": "怕声波和高温；穿得越久，越难分清哪个念头是自己的。",
+      "desc": "黑色的共生体包裹全身，化作带尖刺的活体战甲。",
+      "requires": [],
+      "icon": "images/svg/symbiote_suit.svg"
+    },
+    {
+      "id": "teleport",
+      "name_zh": "瞬间移动",
+      "name_en": "Teleport",
+      "tier": "P",
+      "power_group": "spatial",
+      "type": "active",
+      "energy_cost": 35,
+      "origin": [
+        "mutant",
+        "cosmic"
+      ],
+      "drawback": "落点必须亲眼看到；连续传送会晕眩。",
+      "desc": "在一声轻响中消失，出现在视线内任何位置。",
+      "requires": [],
+      "icon": "images/svg/teleport.svg"
+    },
+    {
+      "id": "portal",
+      "name_zh": "传送门",
+      "name_en": "Portal",
+      "tier": "P",
+      "power_group": "spatial",
+      "type": "active",
+      "energy_cost": 50,
+      "origin": [
+        "mystic",
+        "cosmic"
+      ],
+      "drawback": "门开着时，门的另一边也可能有东西过来。",
+      "desc": "在空中划开一道门，连通两个地点。",
+      "requires": [],
+      "icon": "images/svg/portal.svg"
+    },
+    {
+      "id": "time_stop",
+      "name_zh": "时间暂停",
+      "name_en": "Time Stop",
+      "tier": "P",
+      "power_group": "spatial",
+      "type": "ultimate",
+      "energy_cost": "全部",
+      "origin": [
+        "cosmic",
+        "divine"
+      ],
+      "drawback": "每使用一次，自己都会衰老一岁。",
+      "desc": "让时间静止一回合，只有你能行动。",
+      "requires": [],
+      "icon": "images/svg/time_stop.svg"
     }
   ]
 }

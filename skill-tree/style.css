@@ -803,3 +803,66 @@ button { font: inherit; }
 @media (max-width: 760px) {
   .canvas { --gap-t2: 80px; --gap-p: 70px; }
 }
+
+/* ---------- v6：超能力来源 ---------- */
+.origin-ic {
+  display: inline-grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  flex: none;
+  border-radius: 50%;
+  line-height: 1;
+}
+.origin-ic img { width: 100%; height: 100%; display: block; }
+.origin-ic-txt { background: var(--og); color: #111; border: 1.5px solid var(--ink); font-size: 9px; font-weight: 900; }
+.origin-badges { display: flex; gap: 3px; margin-top: 4px; }
+.origin-mini { width: 15px; height: 15px; filter: drop-shadow(1px 1px 0 rgba(0,0,0,0.6)); }
+.origin-big { width: 44px; height: 44px; margin-right: 10px; font-size: 20px; }
+.origin-filter-wrap { margin: 0 0 18px; padding: 10px 10px 8px; background: rgba(160, 92, 240, 0.08); border: 2px dashed rgba(220, 179, 255, 0.35); border-radius: 10px; }
+.of-title { font-size: 11px; font-weight: 900; color: var(--muted); letter-spacing: 0.08em; margin-bottom: 6px; }
+.origin-filter { display: flex; flex-wrap: wrap; gap: 5px; }
+.of-chip, .origin-chip, .of-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px 2px 3px;
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 800;
+  color: var(--text);
+  background: rgba(0, 0, 0, 0.45);
+  border: 2px solid color-mix(in srgb, var(--og, #b388ff) 70%, transparent);
+  border-radius: 999px;
+  cursor: pointer;
+  line-height: 1.4;
+}
+.of-all { padding-left: 8px; --og: #ffffff; }
+.of-chip:hover, .of-chip:focus-visible, .origin-chip:hover, .origin-chip:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--yellow); }
+.of-chip.is-on { background: var(--og, #fff); color: #111; border-color: var(--ink); box-shadow: 2px 2px 0 var(--ink); }
+.of-status { margin: 6px 0 0; min-height: 0; font-size: 11.5px; color: var(--yellow); }
+.of-status:empty { display: none; }
+.node.filtered-out { opacity: 0.16; filter: grayscale(0.8); }
+.node.filtered-out:hover, .node.filtered-out:focus-visible { opacity: 0.6; }
+.group.filter-empty .group-head { opacity: 0.4; }
+.origin-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.panel .origin-chip { color: #111; background: #fff; border-color: var(--ink); box-shadow: 2px 2px 0 var(--ink); font-size: 12.5px; padding: 2px 9px 2px 3px; }
+.panel .origin-chip .origin-ic { width: 18px; height: 18px; }
+.panel .origin-chip:hover { background: var(--og); }
+.tt-drawback .tt-v { color: #b3261e; font-weight: 700; }
+.tt-innate .tt-v, .tt-acquired .tt-v { font-weight: 900; }
+.tt-actions { margin: 10px 0 2px; }
+.panel .of-toggle { color: #111; background: var(--og, var(--yellow)); border-color: var(--ink); box-shadow: 3px 3px 0 var(--ink); padding: 4px 12px; font-size: 13px; }
+.panel .of-toggle:hover { filter: brightness(1.08); }
+.tt-origin .tt-head { display: flex; align-items: center; background: linear-gradient(100deg, color-mix(in srgb, var(--og) 85%, #000), #2c1250); }
+.tt-origin .tt-zh, .tt-origin .tt-en, .tt-origin .tt-kicker { color: #fff; text-shadow: 1px 1px 0 #000; }
+/* 超能力分组：同一紫色系、按组微调色相 */
+.pg-physical.group { --pgc: #a35cf0; }
+.pg-projection.group { --pgc: #b66df5; }
+.pg-elemental.group { --pgc: #8f5cf0; }
+.pg-psychic.group { --pgc: #c25cf0; }
+.pg-senses.group { --pgc: #7f62e8; }
+.pg-life.group { --pgc: #9a6ce0; }
+.pg-transform.group { --pgc: #b04fd8; }
+.pg-spatial.group { --pgc: #7448d6; }
+.group[class*="pg-"] .group-head { background: var(--pgc, var(--p)); }
