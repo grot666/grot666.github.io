@@ -1,48 +1,233 @@
 {
+  "attributes": {
+    "str": {
+      "name_zh": "力量",
+      "name_en": "Strength"
+    },
+    "agi": {
+      "name_zh": "敏捷",
+      "name_en": "Agility"
+    },
+    "con": {
+      "name_zh": "体质",
+      "name_en": "Constitution"
+    },
+    "int": {
+      "name_zh": "智力",
+      "name_en": "Intellect"
+    },
+    "spi": {
+      "name_zh": "意志",
+      "name_en": "Spirit"
+    },
+    "per": {
+      "name_zh": "感知",
+      "name_en": "Perception"
+    }
+  },
   "lineages": {
     "power": {
       "name_zh": "力量系",
-      "name_en": "Power"
+      "name_en": "Power",
+      "attr_req": {
+        "str": 6,
+        "con": 4
+      },
+      "sources": [
+        {
+          "type": "大师",
+          "name": "地下拳场的老冠军",
+          "desc": "退役的无差别格斗冠军，只教能挨住他三拳的人。"
+        },
+        {
+          "type": "遗迹",
+          "name": "陨石坑里的石碑",
+          "desc": "刻满力量图腾的黑色石碑，摸上去会发烫。"
+        }
+      ]
     },
     "radiant": {
       "name_zh": "光能系",
-      "name_en": "Radiant"
+      "name_en": "Radiant",
+      "attr_req": {
+        "spi": 5,
+        "int": 5
+      },
+      "sources": [
+        {
+          "type": "遗迹",
+          "name": "坠落卫星的核心",
+          "desc": "城郊荒地里还在发光的卫星残骸。"
+        },
+        {
+          "type": "梦境",
+          "name": "光之海的召唤",
+          "desc": "梦里有人在光的海洋里一遍遍演示同一个动作。"
+        }
+      ]
     },
     "speed": {
       "name_zh": "速度系",
-      "name_en": "Speed"
+      "name_en": "Speed",
+      "attr_req": {
+        "agi": 7
+      },
+      "sources": [
+        {
+          "type": "大师",
+          "name": "送了三十年外卖的骑手阿凯",
+          "desc": "全城最快的外卖骑手，从来没有超时过。"
+        },
+        {
+          "type": "书籍",
+          "name": "《疾风步法图解》",
+          "desc": "旧书摊上淘来的步法图册，每一页都画满了脚印。"
+        }
+      ]
     },
     "taichi": {
       "name_zh": "太极传承",
-      "name_en": "Tai Chi"
+      "name_en": "Tai Chi",
+      "attr_req": {
+        "spi": 5,
+        "agi": 4
+      },
+      "sources": [
+        {
+          "type": "大师",
+          "name": "公园里的陈老太太",
+          "desc": "每天清晨在公园打拳，没人见过她出全力。"
+        },
+        {
+          "type": "书籍",
+          "name": "《太极拳谱》残卷",
+          "desc": "缺了后半本的老拳谱，空白处写满前人的批注。"
+        }
+      ]
     },
     "shadow": {
       "name_zh": "暗影系",
-      "name_en": "Shadow"
+      "name_en": "Shadow",
+      "attr_req": {
+        "agi": 5,
+        "per": 5
+      },
+      "sources": [
+        {
+          "type": "契约",
+          "name": "影子里的另一个你",
+          "desc": "某天夜里，你的影子开始比你慢半拍。"
+        },
+        {
+          "type": "大师",
+          "name": "夜市里的盲眼说书人",
+          "desc": "看不见的人，却总能说出你下一步要往哪走。"
+        }
+      ]
     },
     "tech": {
       "name_zh": "科技装甲",
-      "name_en": "Tech Armor"
+      "name_en": "Tech Armor",
+      "attr_req": {
+        "int": 7
+      },
+      "sources": [
+        {
+          "type": "科研",
+          "name": "车库里的第一代装甲",
+          "desc": "用废零件拼出来的第一代原型机，还在冒烟。"
+        },
+        {
+          "type": "遗迹",
+          "name": "废弃军工厂的蓝图",
+          "desc": "铁柜里锁着一套没人能看懂的装甲设计图。"
+        }
+      ]
     },
     "inferno": {
       "name_zh": "烈焰系",
       "name_en": "Inferno",
-      "default_collapsed": true
+      "default_collapsed": true,
+      "attr_req": {
+        "spi": 5,
+        "con": 4
+      },
+      "sources": [
+        {
+          "type": "梦境",
+          "name": "燃烧之城的噩梦",
+          "desc": "反复梦见一座永远在燃烧的城市，醒来时手心发烫。"
+        },
+        {
+          "type": "遗迹",
+          "name": "火山口的熔岩祭坛",
+          "desc": "祭坛上的火焰已经燃烧了上千年。"
+        }
+      ]
     },
     "frost": {
       "name_zh": "寒冰系",
       "name_en": "Frost",
-      "default_collapsed": true
+      "default_collapsed": true,
+      "attr_req": {
+        "spi": 6,
+        "per": 3
+      },
+      "sources": [
+        {
+          "type": "梦境",
+          "name": "冰原上的低语",
+          "desc": "梦里的冰原上，有声音在教你如何让心跳变慢。"
+        },
+        {
+          "type": "书籍",
+          "name": "《北境极寒心法》",
+          "desc": "封面结着霜的古书，翻开时室温会骤降。"
+        }
+      ]
     },
     "feral": {
       "name_zh": "兽魂系",
       "name_en": "Feral",
-      "default_collapsed": true
+      "default_collapsed": true,
+      "attr_req": {
+        "str": 5,
+        "con": 5
+      },
+      "sources": [
+        {
+          "type": "契约",
+          "name": "山林里的狼王",
+          "desc": "与独眼狼王立下约定：借它的力量，替它守护山林。"
+        },
+        {
+          "type": "梦境",
+          "name": "兽群奔跑的梦",
+          "desc": "梦里你和兽群一起奔跑，醒来时指甲变长了。"
+        }
+      ]
     },
     "muay_thai": {
       "name_zh": "泰拳",
       "name_en": "Muay Thai",
-      "default_collapsed": true
+      "default_collapsed": true,
+      "attr_req": {
+        "str": 4,
+        "con": 5,
+        "agi": 3
+      },
+      "sources": [
+        {
+          "type": "大师",
+          "name": "曼谷拳馆的老教练",
+          "desc": "拳馆角落里抽着烟的老人，一眼就能看出你哪里不对。"
+        },
+        {
+          "type": "影像",
+          "name": "泰拳训练营的录像带",
+          "desc": "一盒画面模糊的老录像带，反复看了上百遍。"
+        }
+      ]
     }
   },
   "power_groups": {
@@ -362,9 +547,7 @@
       "tier": "T2",
       "lineage": "power",
       "type": "active",
-      "requires": [
-        "straight_punch"
-      ],
+      "requires": [],
       "desc": "拉开架势蓄满力量，一拳轰出。起手很长，命中后伤害极高。",
       "icon": "images/svg/charged_punch.svg"
     },
@@ -375,10 +558,7 @@
       "tier": "T2",
       "lineage": "power",
       "type": "active",
-      "requires": [
-        "low_sweep",
-        "straight_punch"
-      ],
+      "requires": [],
       "desc": "从高处单膝跪地砸落，落点周围的敌人被震退。",
       "icon": "images/svg/hero_landing.svg"
     },
@@ -389,9 +569,7 @@
       "tier": "T2",
       "lineage": "power",
       "type": "active",
-      "requires": [
-        "shoulder_throw"
-      ],
+      "requires": [],
       "desc": "抓住对手跃起，在空中将其狠狠砸向地面。",
       "icon": "images/svg/aerial_slam.svg"
     },
@@ -403,9 +581,7 @@
       "lineage": "power",
       "status": "coming_soon",
       "type": "active",
-      "requires": [
-        "hero_landing"
-      ],
+      "requires": [],
       "desc": "一脚踏碎地面，冲击波掀翻周围所有人。",
       "icon": "images/svg/ground_quake.svg"
     },
@@ -417,10 +593,7 @@
       "lineage": "radiant",
       "energy_cost": 20,
       "type": "active",
-      "requires": [
-        "straight_punch",
-        "breath_control"
-      ],
+      "requires": [],
       "desc": "将体内光能聚于掌心，向前推出一道冲击波。",
       "icon": "images/svg/energy_blast.svg"
     },
@@ -432,10 +605,7 @@
       "lineage": "radiant",
       "energy_cost": 15,
       "type": "active",
-      "requires": [
-        "jab",
-        "sidestep"
-      ],
+      "requires": [],
       "desc": "身体化作一道光芒冲向对手，同时打出一拳。",
       "icon": "images/svg/dash_punch.svg"
     },
@@ -448,10 +618,7 @@
       "energy_cost": 25,
       "status": "coming_soon",
       "type": "active",
-      "requires": [
-        "parry",
-        "breath_control"
-      ],
+      "requires": [],
       "desc": "在身前展开一面光之屏障，挡下一次攻击。",
       "icon": "images/svg/radiant_barrier.svg"
     },
@@ -462,9 +629,7 @@
       "tier": "T2",
       "lineage": "speed",
       "type": "active",
-      "requires": [
-        "sidestep"
-      ],
+      "requires": [],
       "desc": "瞬间移动到对手身侧，几乎没有收招空档。",
       "icon": "images/svg/flash_step.svg"
     },
@@ -475,10 +640,7 @@
       "tier": "T2",
       "lineage": "speed",
       "type": "active",
-      "requires": [
-        "jab",
-        "elbow_strike"
-      ],
+      "requires": [],
       "desc": "在一次攻击里打出一连串快拳与肘击，单发伤害低但段数多。",
       "icon": "images/svg/rapid_combo.svg"
     },
@@ -489,9 +651,7 @@
       "tier": "T2",
       "lineage": "speed",
       "type": "active",
-      "requires": [
-        "roundhouse_kick"
-      ],
+      "requires": [],
       "desc": "腾空旋转连续踢出两腿。",
       "icon": "images/svg/whirlwind_kick.svg"
     },
@@ -503,9 +663,7 @@
       "lineage": "speed",
       "status": "coming_soon",
       "type": "active",
-      "requires": [
-        "flash_step"
-      ],
+      "requires": [],
       "desc": "高速移动留下残影，诱使对手攻击错误的位置。",
       "icon": "images/svg/afterimage.svg"
     },
@@ -516,10 +674,7 @@
       "tier": "T2",
       "lineage": "taichi",
       "type": "active",
-      "requires": [
-        "clinch",
-        "breath_control"
-      ],
+      "requires": [],
       "desc": "弓步上前，一手分开对手的手臂，另一手顺势将其掀出。",
       "icon": "images/svg/wild_horse_mane.svg"
     },
@@ -530,9 +685,7 @@
       "tier": "T2",
       "lineage": "taichi",
       "type": "active",
-      "requires": [
-        "parry"
-      ],
+      "requires": [],
       "desc": "一手上架、一手下按，同时化解上下两路攻击。",
       "icon": "images/svg/white_crane.svg"
     },
@@ -543,10 +696,7 @@
       "tier": "T2",
       "lineage": "taichi",
       "type": "active",
-      "requires": [
-        "parry",
-        "clinch"
-      ],
+      "requires": [],
       "desc": "掤、捋、挤、按四法连贯，把对手的力量引向一旁后反推。",
       "icon": "images/svg/grasp_sparrow_tail.svg"
     },
@@ -557,10 +707,7 @@
       "tier": "T2",
       "lineage": "taichi",
       "type": "active",
-      "requires": [
-        "parry",
-        "breath_control"
-      ],
+      "requires": [],
       "desc": "双手如行云般交替画圆，持续拨开来袭的攻击。",
       "icon": "images/svg/cloud_hands.svg"
     },
@@ -571,10 +718,7 @@
       "tier": "T2",
       "lineage": "taichi",
       "type": "active",
-      "requires": [
-        "straight_punch",
-        "breath_control"
-      ],
+      "requires": [],
       "desc": "双拳从两侧弧线合击对手双耳，攻击意图最直接的太极招式。",
       "icon": "images/svg/twin_peaks.svg"
     },
@@ -586,10 +730,7 @@
       "lineage": "taichi",
       "image": "images/turn_left_heel_kick.jpg",
       "type": "active",
-      "requires": [
-        "front_kick",
-        "sidestep"
-      ],
+      "requires": [],
       "desc": "转身合抱双手，提膝后以左脚跟向前蹬出。起手较长，蹬出瞬间力道集中。",
       "icon": "images/svg/turn_left_heel_kick.svg"
     },
@@ -601,9 +742,7 @@
       "lineage": "taichi",
       "status": "coming_soon",
       "type": "active",
-      "requires": [
-        "cloud_hands"
-      ],
+      "requires": [],
       "desc": "一手勾、一手推掌，长距离的推击。",
       "icon": "images/svg/single_whip.svg"
     },
@@ -614,10 +753,7 @@
       "tier": "T2",
       "lineage": "shadow",
       "type": "active",
-      "requires": [
-        "sidestep",
-        "throw_object"
-      ],
+      "requires": [],
       "desc": "摔下烟雾弹，在浓烟里消失，下一回合从对手的盲区出现。",
       "icon": "images/svg/smoke_vanish.svg"
     },
@@ -628,10 +764,7 @@
       "tier": "T2",
       "lineage": "shadow",
       "type": "active",
-      "requires": [
-        "elbow_strike",
-        "sidestep"
-      ],
+      "requires": [],
       "desc": "绕到对手身后发动突袭。对手正在出招的收招帧里命中，伤害翻倍。",
       "icon": "images/svg/backstab.svg"
     },
@@ -642,10 +775,7 @@
       "tier": "T2",
       "lineage": "shadow",
       "type": "active",
-      "requires": [
-        "clinch",
-        "breath_control"
-      ],
+      "requires": [],
       "desc": "让自己的影子缠住对手的脚，使其下一回合起手变慢。",
       "energy_cost": 20,
       "icon": "images/svg/shadow_bind.svg"
@@ -657,10 +787,7 @@
       "tier": "T2",
       "lineage": "shadow",
       "type": "active",
-      "requires": [
-        "shoulder_throw",
-        "clinch"
-      ],
+      "requires": [],
       "desc": "从背后锁喉压倒对手，全程不发出一点声音。",
       "icon": "images/svg/silent_takedown.svg"
     },
@@ -671,10 +798,7 @@
       "tier": "T2",
       "lineage": "shadow",
       "type": "active",
-      "requires": [
-        "sidestep",
-        "breath_control"
-      ],
+      "requires": [],
       "desc": "分出数个影子同时出招，对手无法分辨哪一个是真身。",
       "energy_cost": 35,
       "status": "coming_soon",
@@ -687,9 +811,7 @@
       "tier": "T2",
       "lineage": "tech",
       "type": "active",
-      "requires": [
-        "straight_punch"
-      ],
+      "requires": [],
       "desc": "装甲拳套点燃推进器脱手飞出，远距离重击后自动飞回。",
       "energy_cost": 25,
       "icon": "images/svg/rocket_punch.svg"
@@ -701,10 +823,7 @@
       "tier": "T2",
       "lineage": "tech",
       "type": "active",
-      "requires": [
-        "jab",
-        "parry"
-      ],
+      "requires": [],
       "desc": "掌心的冲击炮近距离发射，把对手连同防御一起推开。",
       "energy_cost": 20,
       "icon": "images/svg/repulsor_blast.svg"
@@ -716,10 +835,7 @@
       "tier": "T2",
       "lineage": "tech",
       "type": "active",
-      "requires": [
-        "parry",
-        "cover_up"
-      ],
+      "requires": [],
       "desc": "装甲锁死关节硬接攻击，格挡帧更长，但期间无法移动。",
       "energy_cost": 10,
       "icon": "images/svg/armor_brace.svg"
@@ -731,10 +847,7 @@
       "tier": "T2",
       "lineage": "tech",
       "type": "active",
-      "requires": [
-        "front_kick",
-        "roundhouse_kick"
-      ],
+      "requires": [],
       "desc": "脚跟推进器点火加速的飞踢，起手短，冲击距离长。",
       "energy_cost": 15,
       "icon": "images/svg/thruster_kick.svg"
@@ -746,9 +859,7 @@
       "tier": "T2",
       "lineage": "tech",
       "type": "active",
-      "requires": [
-        "breath_control"
-      ],
+      "requires": [],
       "desc": "解除装甲输出限制，所有科技招式起手缩短，能量持续流失。",
       "energy_cost": "持续",
       "status": "coming_soon",
@@ -761,9 +872,7 @@
       "tier": "T2",
       "lineage": "inferno",
       "type": "active",
-      "requires": [
-        "straight_punch"
-      ],
+      "requires": [],
       "desc": "拳头燃起烈焰后重拳轰出，命中后对手持续灼烧两回合。",
       "energy_cost": 15,
       "icon": "images/svg/flame_fist.svg"
@@ -775,9 +884,7 @@
       "tier": "T2",
       "lineage": "inferno",
       "type": "active",
-      "requires": [
-        "roundhouse_kick"
-      ],
+      "requires": [],
       "desc": "旋身踢出一圈火轮，扫中前方所有目标。",
       "energy_cost": 20,
       "icon": "images/svg/fire_wheel_kick.svg"
@@ -789,9 +896,7 @@
       "tier": "T2",
       "lineage": "inferno",
       "type": "active",
-      "requires": [
-        "sidestep"
-      ],
+      "requires": [],
       "desc": "脚下爆出火星向前冲刺，身后留下一串燃烧的余烬。",
       "energy_cost": 10,
       "icon": "images/svg/ember_dash.svg"
@@ -803,9 +908,7 @@
       "tier": "T2",
       "lineage": "inferno",
       "type": "passive",
-      "requires": [
-        "breath_control"
-      ],
+      "requires": [],
       "desc": "全身散发高温，近身攻击你的对手会被烫伤。",
       "energy_cost": "持续",
       "icon": "images/svg/heat_aura.svg"
@@ -817,14 +920,15 @@
       "tier": "T2",
       "lineage": "inferno",
       "type": "ultimate",
-      "requires": [
-        "breath_control",
-        "low_sweep"
-      ],
+      "requires": [],
       "desc": "一拳砸向地面，脚下喷出冲天火柱，吞没周围的一切。",
       "energy_cost": "全部",
       "status": "coming_soon",
-      "icon": "images/svg/inferno_eruption.svg"
+      "icon": "images/svg/inferno_eruption.svg",
+      "attr_req": {
+        "spi": 7,
+        "con": 6
+      }
     },
     {
       "id": "ice_palm",
@@ -833,9 +937,7 @@
       "tier": "T2",
       "lineage": "frost",
       "type": "active",
-      "requires": [
-        "jab"
-      ],
+      "requires": [],
       "desc": "掌心凝出寒气拍向对手，命中后对手下一回合起手变慢。",
       "energy_cost": 15,
       "icon": "images/svg/ice_palm.svg"
@@ -847,9 +949,7 @@
       "tier": "T2",
       "lineage": "frost",
       "type": "active",
-      "requires": [
-        "parry"
-      ],
+      "requires": [],
       "desc": "在前臂凝结出六角冰盾，格挡成功时冻住来袭的拳脚。",
       "energy_cost": 20,
       "icon": "images/svg/frost_shield.svg"
@@ -861,10 +961,7 @@
       "tier": "T2",
       "lineage": "frost",
       "type": "active",
-      "requires": [
-        "sidestep",
-        "low_sweep"
-      ],
+      "requires": [],
       "desc": "把脚下冻成冰面，压低身体滑铲到对手脚下。",
       "energy_cost": 10,
       "icon": "images/svg/glacier_slide.svg"
@@ -876,10 +973,7 @@
       "tier": "T2",
       "lineage": "frost",
       "type": "active",
-      "requires": [
-        "throw_object",
-        "straight_punch"
-      ],
+      "requires": [],
       "desc": "凝出一根锋利的冰锥掷向远处的对手。",
       "energy_cost": 25,
       "icon": "images/svg/icicle_spear.svg"
@@ -891,13 +985,15 @@
       "tier": "T2",
       "lineage": "frost",
       "type": "ultimate",
-      "requires": [
-        "breath_control"
-      ],
+      "requires": [],
       "desc": "释放极寒领域，冻结周围所有对手一回合。",
       "energy_cost": "全部",
       "status": "coming_soon",
-      "icon": "images/svg/absolute_zero.svg"
+      "icon": "images/svg/absolute_zero.svg",
+      "attr_req": {
+        "spi": 8,
+        "per": 5
+      }
     },
     {
       "id": "tiger_claw",
@@ -906,10 +1002,7 @@
       "tier": "T2",
       "lineage": "feral",
       "type": "active",
-      "requires": [
-        "jab",
-        "clinch"
-      ],
+      "requires": [],
       "desc": "五指弯曲如虎爪，撕开对手的防御。",
       "icon": "images/svg/tiger_claw.svg"
     },
@@ -920,10 +1013,7 @@
       "tier": "T2",
       "lineage": "feral",
       "type": "active",
-      "requires": [
-        "front_kick",
-        "shove"
-      ],
+      "requires": [],
       "desc": "像猎豹一样压低身体，从远处猛扑上去。",
       "icon": "images/svg/pounce.svg"
     },
@@ -934,9 +1024,7 @@
       "tier": "T2",
       "lineage": "feral",
       "type": "active",
-      "requires": [
-        "breath_control"
-      ],
+      "requires": [],
       "desc": "仰天长啸，震慑对手，自己下一招伤害提升。",
       "icon": "images/svg/wolf_howl.svg"
     },
@@ -947,9 +1035,7 @@
       "tier": "T2",
       "lineage": "feral",
       "type": "active",
-      "requires": [
-        "clinch"
-      ],
+      "requires": [],
       "desc": "用双臂死死箍住对手的身体，挤压到对方无法呼吸。",
       "icon": "images/svg/bear_hug.svg"
     },
@@ -960,10 +1046,7 @@
       "tier": "T2",
       "lineage": "feral",
       "type": "active",
-      "requires": [
-        "breath_control",
-        "tiger_claw"
-      ],
+      "requires": [],
       "desc": "释放体内的兽魂，力量和速度暴涨，但无法使用防御招式。",
       "energy_cost": "持续",
       "status": "coming_soon",
@@ -976,9 +1059,7 @@
       "tier": "T2",
       "lineage": "muay_thai",
       "type": "active",
-      "requires": [
-        "front_kick"
-      ],
+      "requires": [],
       "desc": "用脚掌蹬向对手腹部，打断对方的起手并拉开距离。",
       "icon": "images/svg/teep.svg"
     },
@@ -989,9 +1070,7 @@
       "tier": "T2",
       "lineage": "muay_thai",
       "type": "active",
-      "requires": [
-        "clinch"
-      ],
+      "requires": [],
       "desc": "双手箍住对手后颈往下拉，同时提膝向上猛撞。",
       "icon": "images/svg/thai_clinch_knee.svg"
     },
@@ -1002,10 +1081,7 @@
       "tier": "T2",
       "lineage": "muay_thai",
       "type": "active",
-      "requires": [
-        "elbow_strike",
-        "sidestep"
-      ],
+      "requires": [],
       "desc": "背身旋转一圈，用肘尖横扫对手的头部。",
       "icon": "images/svg/spinning_elbow.svg"
     },
@@ -1016,9 +1092,7 @@
       "tier": "T2",
       "lineage": "muay_thai",
       "type": "active",
-      "requires": [
-        "roundhouse_kick"
-      ],
+      "requires": [],
       "desc": "用小腿胫骨扫踢对手大腿，连续命中会让对手站不稳。",
       "icon": "images/svg/low_kick.svg"
     },
@@ -1029,10 +1103,7 @@
       "tier": "T2",
       "lineage": "muay_thai",
       "type": "active",
-      "requires": [
-        "thai_clinch_knee",
-        "front_kick"
-      ],
+      "requires": [],
       "desc": "助跑起跳，在空中提膝撞向对手的下巴。",
       "status": "coming_soon",
       "icon": "images/svg/flying_knee.svg"
@@ -1044,10 +1115,6 @@
       "tier": "P",
       "power_group": "physical",
       "type": "passive",
-      "enhances": [
-        "hero_landing",
-        "charged_punch"
-      ],
       "desc": "远超人类极限的力量，所有物理攻击伤害大幅提升。",
       "requires": [],
       "icon": "images/svg/super_strength.svg"
@@ -1072,9 +1139,6 @@
       "power_group": "physical",
       "type": "active",
       "energy_cost": "持续",
-      "enhances": [
-        "flash_step"
-      ],
       "desc": "以超越感知的速度移动，周围的一切仿佛静止。",
       "requires": [],
       "icon": "images/svg/super_speed.svg"
@@ -1087,10 +1151,6 @@
       "power_group": "physical",
       "type": "active",
       "energy_cost": "持续",
-      "enhances": [
-        "aerial_slam",
-        "thruster_kick"
-      ],
       "desc": "无需任何装置即可自由飞行。",
       "requires": [],
       "icon": "images/svg/flight.svg"
@@ -1141,10 +1201,6 @@
       "energy_cost": 25,
       "desc": "呼出极寒气流，冻结前方的目标。",
       "requires": [],
-      "enhances": [
-        "ice_palm",
-        "glacier_slide"
-      ],
       "icon": "images/svg/freeze_breath.svg"
     },
     {

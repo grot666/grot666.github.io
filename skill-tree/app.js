@@ -7,7 +7,8 @@
   var SVG_NS = "http://www.w3.org/2000/svg";
   var ZOOM_MIN = 0.5, ZOOM_MAX = 1.5, ZOOM_STEP = 0.1;
 
-  var data = null, byId = {}, nodeEls = {}, edges = [], enhancedBy = {};
+  var data = null, byId = {}, nodeEls = {}, edges = [];
+  var lineageShown = null;   // 详情面板正在显示的传承（点击流派信息按钮）
   var groups = {};           // T2 流派 key -> 分组元素
   var STORE_KEY = "supershero.skilltree.collapsed.v2"; // {流派 key: 是否折叠}
   var OLD_STORE_KEY = "supershero.skilltree.collapsed";
@@ -34,7 +35,20 @@
   }
 
   /* ---------- 数据校验 ---------- */
+  function checkAttrs(req, where) {
+    Object.keys(req || {}).forEach(function (a) {
+      if (!(data.attributes || {})[a]) console.warn("[skill-tree] " + where + " 的属性需求里有未知属性：" + a);
+      if (typeof req[a] !== "number") console.warn("[skill-tree] " + where + " 的属性需求 " + a + " 应为数字");
+    });
+  }
   function validate() {
+    Object.keys(data.lineages || {}).forEach(function (k) {
+      var l = data.lineages[k];
+      if (!l.attr_req || !Object.keys(l.attr_req).length) console.warn("[skill-tree] 传承 " + k + " 缺少 attr_req 属性需求");
+      else checkAttrs(l.attr_req, "传承 " + k);
+      if (!Array.isArray(l.sources) || !l.sources.length) console.warn("[skill-tree] 传承 " + k + " 缺少 sources 传承来源");
+      else l.sources.forEach(function (src, i) { if (!src || !src.name) console.warn("[skill-tree] 传承 " + k + " 的第 " + i + " 个来源缺少 name"); });
+    });
     var seen = {};
     data.skills.forEach(function (s, i) {
       if (!s.id) { console.warn("[skill-tree] 第 " + i + " 条技能缺少 id", s); return; }
@@ -50,10 +64,10 @@
         else if (s.tier === "P" || byId[r].tier === "P" || byId[r].tier === "state")
           console.warn("[skill-tree] " + s.id + " 的前置 " + r + " 不应参与前置连线（P 层 / 通用状态）");
       });
-      (s.enhances || []).forEach(function (r) {
-        if (!byId[r]) console.warn("[skill-tree] " + s.id + " 强化的技能不存在：" + r);
-        else if (byId[r].tier !== "T2") console.warn("[skill-tree] " + s.id + " 强化的 " + r + " 不是 T2 技能");
-      });
+      if ((s.tier === "T2" || s.tier === "P") && s.requires && s.requires.length)
+        console.warn("[skill-tree] " + s.id + " 是 " + s.tier + " 技能，不应有前置技能（requires 会被忽略）");
+      if (s.enhances) console.warn("[skill-tree] " + s.id + " 含有已废弃的 enhances 字段（会被忽略）");
+      if (s.attr_req) checkAttrs(s.attr_req, s.id);
       if (s.tier === "T2" && !(data.lineages || {})[s.lineage]) console.warn("[skill-tree] " + s.id + " 的流派未知：" + s.lineage);
       if (s.tier === "P" && !(data.power_groups || {})[s.power_group]) console.warn("[skill-tree] " + s.id + " 的能力组未知：" + s.power_group);
     });
@@ -128,6 +142,21 @@
     h.appendChild(el("span", "group-en", en));
     if (collapsible) h.appendChild(el("span", "group-count", count + " 个技能"));
     g.appendChild(h);
+    if (collapsible) {
+      var lm = (data.lineages || {})[key] || {};
+      var meta = el("div", "group-meta");
+      var chips = attrChips(lm.attr_req);
+      if (chips) meta.appendChild(chips);
+      var info = el("button", "lin-info");
+      info.type = "button";
+      info.dataset.lineage = key;
+      info.setAttribute("aria-label", zh + " 传承详情：属性需求和传承来源");
+      info.appendChild(el("span", "lin-info-i", "i"));
+      info.appendChild(document.createTextNode("传承来源 " + ((lm.sources || []).length)));
+      meta.appendChild(info);
+      g.appendChild(meta);
+      g._meta = meta;
+    }
     var items = el("div", "group-items");
     items.id = "group-items-" + key;
     if (collapsible) h.setAttribute("aria-controls", items.id);
@@ -135,6 +164,21 @@
     g._items = items;
     g._head = h;
     return g;
+  }
+
+  function attrName(a) { var m = (data.attributes || {})[a]; return m ? m.name_zh : a; }
+  function attrChips(req, big) {
+    var keys = Object.keys(req || {});
+    if (!keys.length) return null;
+    var w = el("span", "attr-chips" + (big ? " attr-chips-big tt-v" : ""));
+    keys.forEach(function (a) {
+      var c = el("span", "attr-chip attr-" + a);
+      c.appendChild(el("span", "attr-n", attrName(a)));
+      c.appendChild(el("b", "attr-v", String(req[a])));
+      c.title = attrName(a) + " ≥ " + req[a];
+      w.appendChild(c);
+    });
+    return w;
   }
 
   function renderGrouped(tier, key, metaMap, colId, cls) {
@@ -172,38 +216,26 @@
     Object.keys(data.lineages || {}).forEach(function (k) {
       lg.appendChild(el("span", "chip chip-lin lin-" + k, data.lineages[k].name_zh));
     });
+    // 只有 T0 / T1 之间有前置连线；T2 从传承来源习得，超能力为天生
     skills.forEach(function (s) {
-      if (s.tier === "state" || s.tier === "P") return;
+      if (s.tier !== "T0" && s.tier !== "T1") return;
       (s.requires || []).forEach(function (r) {
-        if (byId[r] && nodeEls[r] && byId[r].tier !== "P" && byId[r].tier !== "state") edges.push({ from: r, to: s.id, kind: "req" });
-      });
-    });
-    skills.forEach(function (s) {
-      if (s.tier !== "P") return;
-      (s.enhances || []).forEach(function (r) {
-        if (byId[r] && nodeEls[r]) {
-          edges.push({ from: s.id, to: r, kind: "enh" });
-          (enhancedBy[r] = enhancedBy[r] || []).push(s.id);
-        }
+        if (byId[r] && nodeEls[r] && (byId[r].tier === "T0" || byId[r].tier === "T1")) edges.push({ from: r, to: s.id, kind: "req" });
       });
     });
   }
 
   /* ---------- 连线（坐标相对画布，与滚动、缩放无关） ---------- */
   function edgeClass(e) {
-    if (e.kind === "enh") return "link link-enh";
     var t = byId[e.to];
     return "link link-req tier-" + t.tier + (t.lineage ? " lin-" + t.lineage : "");
   }
   function markerFor(e) {
-    var t = byId[e.to];
-    if (e.kind === "enh") return "arrow-enh";
-    if (t.tier === "T2") return "arrow-" + (t.lineage || "T2");
-    return "arrow-" + t.tier;
+    return "arrow-" + byId[e.to].tier;
   }
   function buildDefs() {
     var defs = document.createElementNS(SVG_NS, "defs");
-    ["T1", "T2", "enh"].concat(Object.keys(data.lineages || {})).forEach(function (n) {
+    ["T1"].forEach(function (n) {
       var m = document.createElementNS(SVG_NS, "marker");
       m.setAttribute("id", "arrow-" + n);
       m.setAttribute("viewBox", "0 0 10 10");
@@ -234,7 +266,6 @@
     return { l: l, r: l + w, t: t, b: t + h, cy: t + h / 2 };
   }
 
-  // 节点所在分组被折叠时，连线改连到分组标题
   function groupOf(id) {
     var s = byId[id];
     return s && s.tier === "T2" ? groups[s.lineage] : null;
@@ -243,23 +274,13 @@
     var g = groupOf(id);
     return !!(g && g.classList.contains("collapsed"));
   }
-  function visibleEl(id) {
-    var g = groupOf(id);
-    return g && g.classList.contains("collapsed") ? g._head : nodeEls[id];
-  }
 
   function drawLinks() {
     var m = canvasMetrics();
     edges.forEach(function (e) {
-      var fromEl = visibleEl(e.from), toEl = visibleEl(e.to);
-      var a = rectIn(fromEl, m), b = rectIn(toEl, m);
-      if (e.el) e.el.classList.toggle("to-group", fromEl !== nodeEls[e.from] || toEl !== nodeEls[e.to]);
+      var a = rectIn(nodeEls[e.from], m), b = rectIn(nodeEls[e.to], m);
       var d, x1, y1, x2, y2, k;
-      if (e.kind === "enh") {
-        x1 = a.l; y1 = a.cy; x2 = b.r + 2; y2 = b.cy;
-        k = Math.max(50, (x1 - x2) * 0.5);
-        d = "M" + x1 + "," + y1 + " C" + (x1 - k) + "," + y1 + " " + (x2 + k) + "," + y2 + " " + x2 + "," + y2;
-      } else if (Math.abs(a.l - b.l) < 30) {
+      if (Math.abs(a.l - b.l) < 30) {
         x1 = a.r; y1 = a.cy; x2 = b.r + 2; y2 = b.cy;
         k = 34 + Math.min(50, Math.abs(y2 - y1) * 0.12);
         d = "M" + x1 + "," + y1 + " C" + (x1 + k) + "," + y1 + " " + (x2 + k) + "," + y2 + " " + x2 + "," + y2;
@@ -298,21 +319,24 @@
   }
   function applyHighlight() {
     var id = shownId;
-    if (!id) {
+    if (!id && lineageShown) {
+      // 传承详情：高亮该流派的全部技能
+      document.body.classList.add("focus-mode");
+      Object.keys(nodeEls).forEach(function (k) {
+        nodeEls[k].classList.toggle("hl", byId[k].lineage === lineageShown && byId[k].tier === "T2");
+        nodeEls[k].classList.remove("hl-self");
+      });
+      edges.forEach(function (e) { if (e.el) e.el.classList.remove("hl"); });
+    } else if (!id) {
       document.body.classList.remove("focus-mode");
       Object.keys(nodeEls).forEach(function (k) { nodeEls[k].classList.remove("hl", "hl-self"); });
       edges.forEach(function (e) { if (e.el) e.el.classList.remove("hl"); });
     } else {
       var s = byId[id], on = {}, onEdge = [];
-      if (s.tier === "state") on[id] = true;
-      else if (s.tier === "P") {
-        on[id] = true;
-        edges.forEach(function (e) { if (e.kind === "enh" && e.from === id) { on[e.to] = true; onEdge.push(e); } });
-      } else {
+      if (s.tier === "T0" || s.tier === "T1") {
         on = ancestors(id);
-        edges.forEach(function (e) { if (e.kind === "req" && on[e.from] && on[e.to]) onEdge.push(e); });
-        edges.forEach(function (e) { if (e.kind === "enh" && e.to === id) { on[e.from] = true; onEdge.push(e); } });
-      }
+        edges.forEach(function (e) { if (on[e.from] && on[e.to]) onEdge.push(e); });
+      } else on[id] = true;
       document.body.classList.add("focus-mode");
       Object.keys(nodeEls).forEach(function (k) {
         nodeEls[k].classList.toggle("hl", !!on[k]);
@@ -322,8 +346,10 @@
     }
     Object.keys(groups).forEach(function (k) {
       var g = groups[k], hit = false;
-      if (id) Array.prototype.forEach.call(g._items.children, function (n) { if (n.classList.contains("hl")) hit = true; });
+      if (id || lineageShown) Array.prototype.forEach.call(g._items.children, function (n) { if (n.classList.contains("hl")) hit = true; });
+      if (lineageShown === k) hit = true;
       g._head.classList.toggle("hl", hit);
+      g.classList.toggle("lin-selected", lineageShown === k && !id);
     });
     Object.keys(nodeEls).forEach(function (k) {
       var sel = k === pinnedId;
@@ -356,7 +382,8 @@
 
   function renderPanel() {
     var id = shownId;
-    document.body.classList.toggle("has-detail", !!id);
+    document.body.classList.toggle("has-detail", !!(id || lineageShown));
+    if (!id && lineageShown) { renderLineagePanel(lineageShown); return; }
     if (!id) {
       panelDetail.hidden = true;
       panelDetail.innerHTML = "";
@@ -423,18 +450,19 @@
       body.appendChild(row("层级", tierText));
       if (s.type) body.appendChild(row("类型", TYPE_LABEL[s.type] || s.type));
       if (s.tier === "P") {
-        body.appendChild(row("获得方式", "先天 / 起源（不可学习）"));
-        body.appendChild(row("升级", "消耗技能点"));
+        body.appendChild(row("获得方式", "天生（无法学习）"));
       } else if (s.tier === "T2") {
-        var l2 = (data.lineages || {})[s.lineage];
-        body.appendChild(row("解锁方式", "需要传承：" + (l2 ? l2.name_zh : s.lineage)));
+        var l2 = (data.lineages || {})[s.lineage] || {};
+        body.appendChild(row("解锁方式", "从传承来源习得"));
+        var req = s.attr_req || l2.attr_req;
+        if (req) body.appendChild(row(s.attr_req ? "属性需求*" : "属性需求", attrChips(req, true)));
+        if (l2.sources && l2.sources.length) body.appendChild(row("传承来源", sourceNames(l2.sources, s.lineage)));
       } else {
         body.appendChild(row("解锁方式", "消耗技能点：" + (s.cost != null ? s.cost : "—")));
       }
       if (s.energy_cost != null && s.energy_cost !== "") body.appendChild(row("能量消耗", String(s.energy_cost), "tt-energy"));
-      if (s.tier !== "P") body.appendChild(row("前置技能", (s.requires && s.requires.length) ? linkList(s.requires) : "无"));
-      if (s.enhances && s.enhances.length) body.appendChild(row("强化", linkList(s.enhances), "tt-enh"));
-      if (enhancedBy[s.id]) body.appendChild(row("可被强化", linkList(enhancedBy[s.id]), "tt-enh"));
+      if (s.tier === "T0" || s.tier === "T1") body.appendChild(row("前置技能", (s.requires && s.requires.length) ? linkList(s.requires) : "无"));
+      if (s.attr_req && s.tier === "T2") body.appendChild(el("p", "tt-note", "* 此招式的属性需求高于本传承的基础需求。"));
       if (s.status === "coming_soon") {
         var cs = el("div", "tt-soon");
         cs.appendChild(lockIcon());
@@ -444,6 +472,65 @@
     }
     panelDetail.appendChild(body);
     if (s.desc) panelDetail.appendChild(el("p", "tt-desc", s.desc));
+  }
+
+  function sourceNames(list, lineageKey) {
+    var w = el("span", "tt-v tt-sources");
+    list.forEach(function (src, i) {
+      if (i) w.appendChild(document.createTextNode("、"));
+      w.appendChild(el("span", "src-type src-" + (src.type || ""), src.type || "来源"));
+      w.appendChild(document.createTextNode(src.name));
+    });
+    var more = el("button", "jump lin-more", "查看传承详情");
+    more.type = "button";
+    more.dataset.lineage = lineageKey;
+    w.appendChild(more);
+    return w;
+  }
+
+  function renderLineagePanel(k) {
+    var l = (data.lineages || {})[k] || { name_zh: k, name_en: "" };
+    panelEmpty.hidden = true;
+    panelDetail.hidden = false;
+    panelDetail.innerHTML = "";
+    panelDetail.className = "panel-detail tt-tier-T2 tt-lineage lin-" + k;
+    var head = el("div", "tt-head");
+    var names = el("div", "tt-names");
+    names.appendChild(el("span", "tt-kicker", "T2 传承"));
+    names.appendChild(el("span", "tt-zh", l.name_zh));
+    names.appendChild(el("span", "tt-en", l.name_en));
+    head.appendChild(names);
+    var x = el("button", "tt-close", "×");
+    x.type = "button";
+    x.setAttribute("aria-label", "关闭传承详情");
+    x.dataset.close = "1";
+    head.appendChild(x);
+    panelDetail.appendChild(head);
+    var body = el("div", "tt-body");
+    body.appendChild(row("习得方式", "满足属性需求后，从任一传承来源习得本流派的招式（无需前置技能）"));
+    var chips = attrChips(l.attr_req, true);
+    if (chips) body.appendChild(row("属性需求", chips));
+    var skills = data.skills.filter(function (s) { return s.tier === "T2" && s.lineage === k; });
+    body.appendChild(row("招式", linkList(skills.map(function (s) { return s.id; }))));
+    panelDetail.appendChild(body);
+    var srcs = l.sources || [];
+    if (srcs.length) {
+      var sec = el("div", "tt-src-list");
+      sec.appendChild(el("h3", "tt-src-title", "传承来源"));
+      srcs.forEach(function (src) {
+        var c = el("div", "src-card");
+        var t = el("div", "src-card-head");
+        t.appendChild(el("span", "src-type src-" + (src.type || ""), src.type || "来源"));
+        t.appendChild(el("b", "src-name", src.name));
+        c.appendChild(t);
+        if (src.desc) c.appendChild(el("p", "src-desc", src.desc));
+        sec.appendChild(c);
+      });
+      panelDetail.appendChild(sec);
+    }
+  }
+  function showLineage(k) {
+    pinnedId = null; previewId = null; lineageShown = k; update();
   }
 
   function update() {
@@ -456,14 +543,14 @@
   function preview(id) { if (previewId !== id) { previewId = id; update(); } }
   function endPreview() { if (previewId) { previewId = null; update(); } }
   function pin(id) {
-    pinnedId = id; previewId = null; update();
+    pinnedId = id; previewId = null; lineageShown = null; update();
     // 详情面板（尤其是手机底部抽屉）展开后视口会变小，确保选中的卡片仍然可见
     requestAnimationFrame(function () {
       var n = nodeEls[id];
       if (n && !isHidden(id)) n.scrollIntoView({ block: "nearest", inline: "nearest" });
     });
   }
-  function unpin() { pinnedId = null; previewId = null; update(); }
+  function unpin() { pinnedId = null; previewId = null; lineageShown = null; update(); }
 
   function reveal(id, smooth) {
     var n = nodeEls[id];
@@ -599,6 +686,8 @@
       var j = ev.target.closest && ev.target.closest("[data-jump]");
       if (j) { var id = j.dataset.jump; pin(id); reveal(id, true); nodeEls[id].focus({ preventScroll: true }); return; }
       if (ev.target.closest && ev.target.closest("[data-close]")) { unpin(); return; }
+      var li = ev.target.closest && ev.target.closest("[data-lineage]");
+      if (li) { showLineage(li.dataset.lineage); return; }
       var tg = ev.target.closest && ev.target.closest("[data-toggle]");
       if (tg) { var gk = tg.dataset.toggle; setCollapsed(gk, !groups[gk].classList.contains("collapsed")); return; }
       var all = ev.target.closest && ev.target.closest("[data-all]");
