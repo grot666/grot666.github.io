@@ -1,29 +1,24 @@
-/* supershero 技能树：所有技能数据来自 skills.json，本文件不包含任何技能定义。 */
+/* supershero 技能树 v2：所有技能数据来自 skills.json，本文件不包含任何技能定义。 */
 (function () {
   "use strict";
 
   var TIER_LABEL = { T0: "T0 人类本能", T1: "T1 武术训练", T2: "T2 传承", P: "P 超能力" };
   var TYPE_LABEL = { active: "主动", passive: "被动", ultimate: "终极" };
   var SVG_NS = "http://www.w3.org/2000/svg";
+  var ZOOM_MIN = 0.5, ZOOM_MAX = 1.5, ZOOM_STEP = 0.1;
 
-  var data = null;
-  var byId = {};
-  var nodeEls = {};          // id -> 卡片元素
-  var edges = [];            // {from, to, kind: "req"|"enh", el}
-  var enhancedBy = {};       // T2 id -> [P id]
-  var tree, svg, tooltip, scroller;
-  var pinnedId = null;       // 点击（触屏）固定显示的节点
-  var activeId = null;
+  var data = null, byId = {}, nodeEls = {}, edges = [], enhancedBy = {};
+  var canvas, svg, viewport, panel, panelEmpty, panelDetail;
+  var pinnedId = null, previewId = null, shownId = null;
+  var zoom = 1;
 
   function $(id) { return document.getElementById(id); }
-
   function el(tag, cls, text) {
     var e = document.createElement(tag);
     if (cls) e.className = cls;
     if (text != null) e.textContent = text;
     return e;
   }
-
   function lockIcon() {
     var s = document.createElementNS(SVG_NS, "svg");
     s.setAttribute("viewBox", "0 0 24 24");
@@ -42,10 +37,8 @@
       if (!s.id) { console.warn("[skill-tree] 第 " + i + " 条技能缺少 id", s); return; }
       if (seen[s.id]) console.warn("[skill-tree] 重复的技能 id：" + s.id);
       seen[s.id] = true;
-      if (["state", "T0", "T1", "T2", "P"].indexOf(s.tier) < 0)
-        console.warn("[skill-tree] " + s.id + " 的 tier 未知：" + s.tier);
-      if (s.type && !TYPE_LABEL[s.type])
-        console.warn("[skill-tree] " + s.id + " 的 type 未知：" + s.type);
+      if (["state", "T0", "T1", "T2", "P"].indexOf(s.tier) < 0) console.warn("[skill-tree] " + s.id + " 的 tier 未知：" + s.tier);
+      if (s.type && !TYPE_LABEL[s.type]) console.warn("[skill-tree] " + s.id + " 的 type 未知：" + s.type);
     });
     data.skills.forEach(function (s) {
       (s.requires || []).forEach(function (r) {
@@ -57,10 +50,8 @@
         if (!byId[r]) console.warn("[skill-tree] " + s.id + " 强化的技能不存在：" + r);
         else if (byId[r].tier !== "T2") console.warn("[skill-tree] " + s.id + " 强化的 " + r + " 不是 T2 技能");
       });
-      if (s.tier === "T2" && !(data.lineages || {})[s.lineage])
-        console.warn("[skill-tree] " + s.id + " 的流派未知：" + s.lineage);
-      if (s.tier === "P" && !(data.power_groups || {})[s.power_group])
-        console.warn("[skill-tree] " + s.id + " 的能力组未知：" + s.power_group);
+      if (s.tier === "T2" && !(data.lineages || {})[s.lineage]) console.warn("[skill-tree] " + s.id + " 的流派未知：" + s.lineage);
+      if (s.tier === "P" && !(data.power_groups || {})[s.power_group]) console.warn("[skill-tree] " + s.id + " 的能力组未知：" + s.power_group);
     });
   }
 
@@ -71,17 +62,13 @@
     n.dataset.id = s.id;
     n.tabIndex = 0;
     n.setAttribute("role", "button");
-    n.setAttribute("aria-describedby", "tooltip");
+    n.setAttribute("aria-controls", "panel");
     if (s.lineage) n.classList.add("lin-" + s.lineage);
     if (s.power_group) n.classList.add("pg-" + s.power_group);
     n.classList.add("type-" + (s.type || "active"));
     var label = s.name_zh + "（" + s.name_en + "）";
-    if (s.status === "coming_soon") {
-      n.classList.add("coming-soon");
-      label += "，即将开放";
-    }
+    if (s.status === "coming_soon") { n.classList.add("coming-soon"); label += "，即将开放"; }
     n.setAttribute("aria-label", label);
-
     n.appendChild(el("span", "node-zh", s.name_zh));
     n.appendChild(el("span", "node-en", s.name_en));
     var badges = el("span", "node-badges");
@@ -114,61 +101,43 @@
     return g;
   }
 
+  function renderGrouped(tier, key, metaMap, colId, cls) {
+    var list = data.skills.filter(function (s) { return s.tier === tier; });
+    var keys = Object.keys(metaMap || {});
+    list.forEach(function (s) { if (keys.indexOf(s[key]) < 0) keys.push(s[key]); });
+    var col = $(colId);
+    keys.forEach(function (k) {
+      var items = list.filter(function (s) { return s[key] === k; });
+      if (!items.length) return;
+      var meta = (metaMap || {})[k] || { name_zh: String(k), name_en: "" };
+      var g = groupBox(cls, k, meta.name_zh, meta.name_en);
+      items.forEach(function (s) { g.appendChild(makeNode(s)); });
+      col.appendChild(g);
+    });
+  }
+
   function render() {
     var skills = data.skills;
     ["T0", "T1"].forEach(function (t) {
       var col = $("col-" + t);
       skills.filter(function (s) { return s.tier === t; }).forEach(function (s) { col.appendChild(makeNode(s)); });
     });
-
-    // T2：按流派分组（流派顺序按 lineages 定义顺序，其后是未登记流派）
-    var t2 = skills.filter(function (s) { return s.tier === "T2"; });
-    var linKeys = Object.keys(data.lineages || {});
-    t2.forEach(function (s) { if (linKeys.indexOf(s.lineage) < 0) linKeys.push(s.lineage); });
-    var colT2 = $("col-T2");
-    linKeys.forEach(function (k) {
-      var list = t2.filter(function (s) { return s.lineage === k; });
-      if (!list.length) return;
-      var meta = (data.lineages || {})[k] || { name_zh: String(k), name_en: "" };
-      var g = groupBox("lin", k, meta.name_zh, meta.name_en);
-      list.forEach(function (s) { g.appendChild(makeNode(s)); });
-      colT2.appendChild(g);
-    });
-
-    // P：按能力组分组
-    var ps = skills.filter(function (s) { return s.tier === "P"; });
-    var pgKeys = Object.keys(data.power_groups || {});
-    ps.forEach(function (s) { if (pgKeys.indexOf(s.power_group) < 0) pgKeys.push(s.power_group); });
-    var colP = $("col-P");
-    pgKeys.forEach(function (k) {
-      var list = ps.filter(function (s) { return s.power_group === k; });
-      if (!list.length) return;
-      var meta = (data.power_groups || {})[k] || { name_zh: String(k), name_en: "" };
-      var g = groupBox("pg", k, meta.name_zh, meta.name_en);
-      list.forEach(function (s) { g.appendChild(makeNode(s)); });
-      colP.appendChild(g);
-    });
-
-    // 通用状态
+    renderGrouped("T2", "lineage", data.lineages, "col-T2", "lin");
+    renderGrouped("P", "power_group", data.power_groups, "col-P", "pg");
     var st = $("states");
     skills.filter(function (s) { return s.tier === "state"; }).forEach(function (s) {
       var n = makeNode(s);
       n.classList.add("state-card");
       st.appendChild(n);
     });
-
-    // 图例里的流派（来自数据）
     var lg = $("legend-lineages");
     Object.keys(data.lineages || {}).forEach(function (k) {
       lg.appendChild(el("span", "chip chip-lin lin-" + k, data.lineages[k].name_zh));
     });
-
-    // 边
     skills.forEach(function (s) {
       if (s.tier === "state" || s.tier === "P") return;
       (s.requires || []).forEach(function (r) {
-        if (byId[r] && nodeEls[r] && byId[r].tier !== "P" && byId[r].tier !== "state")
-          edges.push({ from: r, to: s.id, kind: "req" });
+        if (byId[r] && nodeEls[r] && byId[r].tier !== "P" && byId[r].tier !== "state") edges.push({ from: r, to: s.id, kind: "req" });
       });
     });
     skills.forEach(function (s) {
@@ -182,26 +151,21 @@
     });
   }
 
-  /* ---------- 连线 ---------- */
+  /* ---------- 连线（坐标相对画布，与滚动、缩放无关） ---------- */
   function edgeClass(e) {
-    var t = byId[e.to];
     if (e.kind === "enh") return "link link-enh";
-    var c = "link link-req tier-" + t.tier;
-    if (t.lineage) c += " lin-" + t.lineage;
-    return c;
+    var t = byId[e.to];
+    return "link link-req tier-" + t.tier + (t.lineage ? " lin-" + t.lineage : "");
   }
-
   function markerFor(e) {
     var t = byId[e.to];
     if (e.kind === "enh") return "arrow-enh";
     if (t.tier === "T2") return "arrow-" + (t.lineage || "T2");
     return "arrow-" + t.tier;
   }
-
   function buildDefs() {
     var defs = document.createElementNS(SVG_NS, "defs");
-    var names = ["T1", "T2", "enh"].concat(Object.keys(data.lineages || {}));
-    names.forEach(function (n) {
+    ["T1", "T2", "enh"].concat(Object.keys(data.lineages || {})).forEach(function (n) {
       var m = document.createElementNS(SVG_NS, "marker");
       m.setAttribute("id", "arrow-" + n);
       m.setAttribute("viewBox", "0 0 10 10");
@@ -219,33 +183,36 @@
     svg.appendChild(defs);
   }
 
-  function rectIn(node, base) {
+  function canvasMetrics() {
+    var r = canvas.getBoundingClientRect();
+    // 屏幕像素 / 画布内部 CSS 像素（同时兼容 zoom 与 transform 缩放）
+    var ratio = canvas.offsetWidth ? r.width / canvas.offsetWidth : 1;
+    return { left: r.left, top: r.top, ratio: ratio || 1 };
+  }
+  function rectIn(node, m) {
     var r = node.getBoundingClientRect();
-    return { l: r.left - base.left, r: r.right - base.left, t: r.top - base.top, b: r.bottom - base.top, cy: (r.top + r.bottom) / 2 - base.top };
+    var l = (r.left - m.left) / m.ratio, t = (r.top - m.top) / m.ratio;
+    var w = r.width / m.ratio, h = r.height / m.ratio;
+    return { l: l, r: l + w, t: t, b: t + h, cy: t + h / 2 };
   }
 
   function drawLinks() {
-    var base = tree.getBoundingClientRect();
-    svg.setAttribute("width", tree.scrollWidth);
-    svg.setAttribute("height", tree.scrollHeight);
-    svg.setAttribute("viewBox", "0 0 " + tree.scrollWidth + " " + tree.scrollHeight);
+    var m = canvasMetrics();
     edges.forEach(function (e) {
-      var a = rectIn(nodeEls[e.from], base), b = rectIn(nodeEls[e.to], base);
-      var d, x1, y1, x2, y2;
+      var a = rectIn(nodeEls[e.from], m), b = rectIn(nodeEls[e.to], m);
+      var d, x1, y1, x2, y2, k;
       if (e.kind === "enh") {
-        // 超能力（右侧）→ 被强化的 T2（左侧）
         x1 = a.l; y1 = a.cy; x2 = b.r + 2; y2 = b.cy;
-        var k = Math.max(40, (x1 - x2) * 0.5);
+        k = Math.max(50, (x1 - x2) * 0.5);
         d = "M" + x1 + "," + y1 + " C" + (x1 - k) + "," + y1 + " " + (x2 + k) + "," + y2 + " " + x2 + "," + y2;
       } else if (Math.abs(a.l - b.l) < 30) {
-        // 同列前置：从右侧绕出
         x1 = a.r; y1 = a.cy; x2 = b.r + 2; y2 = b.cy;
-        var bulge = 26 + Math.min(40, Math.abs(y2 - y1) * 0.15);
-        d = "M" + x1 + "," + y1 + " C" + (x1 + bulge) + "," + y1 + " " + (x2 + bulge) + "," + y2 + " " + x2 + "," + y2;
+        k = 34 + Math.min(50, Math.abs(y2 - y1) * 0.12);
+        d = "M" + x1 + "," + y1 + " C" + (x1 + k) + "," + y1 + " " + (x2 + k) + "," + y2 + " " + x2 + "," + y2;
       } else {
         x1 = a.r; y1 = a.cy; x2 = b.l - 2; y2 = b.cy;
-        var dx = Math.max(30, (x2 - x1) * 0.5);
-        d = "M" + x1 + "," + y1 + " C" + (x1 + dx) + "," + y1 + " " + (x2 - dx) + "," + y2 + " " + x2 + "," + y2;
+        k = Math.max(40, (x2 - x1) * 0.5);
+        d = "M" + x1 + "," + y1 + " C" + (x1 + k) + "," + y1 + " " + (x2 - k) + "," + y2 + " " + x2 + "," + y2;
       }
       if (!e.el) {
         e.el = document.createElementNS(SVG_NS, "path");
@@ -257,14 +224,13 @@
       }
       e.el.setAttribute("d", d);
     });
-    if (activeId) highlight(activeId);
+    applyHighlight();
   }
-
   var rafPending = false;
   function scheduleDraw() {
     if (rafPending) return;
     rafPending = true;
-    requestAnimationFrame(function () { rafPending = false; drawLinks(); if (activeId) positionTooltip(activeId); });
+    requestAnimationFrame(function () { rafPending = false; drawLinks(); });
   }
 
   /* ---------- 高亮 ---------- */
@@ -273,92 +239,119 @@
     if (acc[id]) return acc;
     acc[id] = true;
     var s = byId[id];
-    if (s && s.tier !== "P" && s.tier !== "state")
-      (s.requires || []).forEach(function (r) { if (byId[r]) ancestors(r, acc); });
+    if (s && s.tier !== "P" && s.tier !== "state") (s.requires || []).forEach(function (r) { if (byId[r]) ancestors(r, acc); });
     return acc;
   }
-
-  function highlight(id) {
-    var s = byId[id];
-    var on = {};
-    var onEdge = [];
-    if (s.tier === "state") {
-      on[id] = true;
-    } else if (s.tier === "P") {
-      on[id] = true;
-      edges.forEach(function (e) { if (e.kind === "enh" && e.from === id) { on[e.to] = true; onEdge.push(e); } });
+  function applyHighlight() {
+    var id = shownId;
+    if (!id) {
+      document.body.classList.remove("focus-mode");
+      Object.keys(nodeEls).forEach(function (k) { nodeEls[k].classList.remove("hl", "hl-self"); });
+      edges.forEach(function (e) { if (e.el) e.el.classList.remove("hl"); });
     } else {
-      on = ancestors(id);
-      edges.forEach(function (e) {
-        if (e.kind === "req" && on[e.from] && on[e.to]) onEdge.push(e);
+      var s = byId[id], on = {}, onEdge = [];
+      if (s.tier === "state") on[id] = true;
+      else if (s.tier === "P") {
+        on[id] = true;
+        edges.forEach(function (e) { if (e.kind === "enh" && e.from === id) { on[e.to] = true; onEdge.push(e); } });
+      } else {
+        on = ancestors(id);
+        edges.forEach(function (e) { if (e.kind === "req" && on[e.from] && on[e.to]) onEdge.push(e); });
+        edges.forEach(function (e) { if (e.kind === "enh" && e.to === id) { on[e.from] = true; onEdge.push(e); } });
+      }
+      document.body.classList.add("focus-mode");
+      Object.keys(nodeEls).forEach(function (k) {
+        nodeEls[k].classList.toggle("hl", !!on[k]);
+        nodeEls[k].classList.toggle("hl-self", k === id);
       });
-      // 强化当前技能的超能力也一起亮起
-      edges.forEach(function (e) { if (e.kind === "enh" && e.to === id) { on[e.from] = true; onEdge.push(e); } });
+      edges.forEach(function (e) { if (e.el) e.el.classList.toggle("hl", onEdge.indexOf(e) >= 0); });
     }
-    document.body.classList.add("focus-mode");
     Object.keys(nodeEls).forEach(function (k) {
-      nodeEls[k].classList.toggle("hl", !!on[k]);
-      nodeEls[k].classList.toggle("hl-self", k === id);
+      var sel = k === pinnedId;
+      nodeEls[k].classList.toggle("selected", sel);
+      nodeEls[k].setAttribute("aria-pressed", sel ? "true" : "false");
     });
-    edges.forEach(function (e) { e.el && e.el.classList.toggle("hl", onEdge.indexOf(e) >= 0); });
   }
 
-  function clearHighlight() {
-    document.body.classList.remove("focus-mode");
-    Object.keys(nodeEls).forEach(function (k) { nodeEls[k].classList.remove("hl", "hl-self"); });
-    edges.forEach(function (e) { e.el && e.el.classList.remove("hl"); });
+  /* ---------- 详情面板 ---------- */
+  function linkList(ids) {
+    var wrap = el("span", "tt-v tt-links");
+    ids.forEach(function (r, i) {
+      if (i) wrap.appendChild(document.createTextNode("、"));
+      if (byId[r]) {
+        var b = el("button", "jump", byId[r].name_zh);
+        b.type = "button";
+        b.dataset.jump = r;
+        b.title = "跳转到 " + byId[r].name_zh;
+        wrap.appendChild(b);
+      } else wrap.appendChild(document.createTextNode(r));
+    });
+    return wrap;
   }
-
-  /* ---------- 提示框 ---------- */
-  function names(ids) {
-    return ids.map(function (r) { return byId[r] ? byId[r].name_zh : r; }).join("、");
-  }
-
   function row(label, value, cls) {
     var r = el("div", "tt-row" + (cls ? " " + cls : ""));
     r.appendChild(el("span", "tt-k", label));
-    r.appendChild(el("span", "tt-v", value));
+    r.appendChild(typeof value === "string" ? el("span", "tt-v", value) : value);
     return r;
   }
 
-  function fillTooltip(s) {
-    tooltip.innerHTML = "";
-    tooltip.className = "tooltip tt-tier-" + s.tier + (s.lineage ? " lin-" + s.lineage : "") + (s.type ? " type-" + s.type : "");
+  function renderPanel() {
+    var id = shownId;
+    document.body.classList.toggle("has-detail", !!id);
+    if (!id) {
+      panelDetail.hidden = true;
+      panelDetail.innerHTML = "";
+      panelEmpty.hidden = false;
+      return;
+    }
+    var s = byId[id];
+    panelEmpty.hidden = true;
+    panelDetail.hidden = false;
+    panelDetail.innerHTML = "";
+    panelDetail.className = "panel-detail tt-tier-" + s.tier + (s.lineage ? " lin-" + s.lineage : "") + (s.type ? " type-" + s.type : "");
+
+    var head = el("div", "tt-head");
+    var names = el("div", "tt-names");
+    names.appendChild(el("span", "tt-zh", s.name_zh));
+    names.appendChild(el("span", "tt-en", s.name_en));
+    head.appendChild(names);
+    var state = el("span", "tt-state", id === pinnedId ? "已选中" : "预览");
+    head.appendChild(state);
+    if (id === pinnedId) {
+      var x = el("button", "tt-close", "×");
+      x.type = "button";
+      x.setAttribute("aria-label", "取消选中");
+      x.dataset.close = "1";
+      head.appendChild(x);
+    }
 
     if (s.image) {
       var fig = el("div", "tt-img");
       fig.hidden = true;
       var img = new Image();
       img.alt = s.name_zh + " 关键帧";
-      img.onload = function () { fig.hidden = false; if (activeId === s.id) positionTooltip(s.id); };
+      img.onload = function () { fig.hidden = false; };
       img.onerror = function () { if (fig.parentNode) fig.parentNode.removeChild(fig); };
       img.src = s.image;
       fig.appendChild(img);
-      tooltip.appendChild(fig);
+      panelDetail.appendChild(fig);
     }
-
-    var head = el("div", "tt-head");
-    head.appendChild(el("span", "tt-zh", s.name_zh));
-    head.appendChild(el("span", "tt-en", s.name_en));
-    tooltip.appendChild(head);
+    panelDetail.appendChild(head);
 
     var body = el("div", "tt-body");
     if (s.tier === "state") {
       body.appendChild(row("分类", "通用状态（非技能）"));
     } else {
-      var tierText = s.tier;
-      if (s.tier === "T2" && s.lineage) {
+      var tierText;
+      if (s.tier === "T2") {
         var lin = (data.lineages || {})[s.lineage];
-        tierText += " · " + (lin ? lin.name_zh : s.lineage);
+        tierText = "T2 · " + (lin ? lin.name_zh : s.lineage);
       } else if (s.tier === "P") {
         var pg = (data.power_groups || {})[s.power_group];
         tierText = "超能力 · " + (pg ? pg.name_zh : s.power_group);
-      } else {
-        tierText = TIER_LABEL[s.tier] || s.tier;
-      }
+      } else tierText = TIER_LABEL[s.tier] || s.tier;
       body.appendChild(row("层级", tierText));
-      if (s.type) body.appendChild(row("类型", TYPE_LABEL[s.type] || s.type, "tt-type"));
-
+      if (s.type) body.appendChild(row("类型", TYPE_LABEL[s.type] || s.type));
       if (s.tier === "P") {
         body.appendChild(row("获得方式", "先天 / 起源（不可学习）"));
         body.appendChild(row("升级", "消耗技能点"));
@@ -368,18 +361,10 @@
       } else {
         body.appendChild(row("解锁方式", "消耗技能点：" + (s.cost != null ? s.cost : "—")));
       }
-
-      if (s.energy_cost != null && s.energy_cost !== "")
-        body.appendChild(row("能量消耗", String(s.energy_cost), "tt-energy"));
-
-      if (s.tier !== "P")
-        body.appendChild(row("前置技能", (s.requires && s.requires.length) ? names(s.requires) : "无"));
-
-      if (s.enhances && s.enhances.length)
-        body.appendChild(row("强化", names(s.enhances), "tt-enh"));
-      if (enhancedBy[s.id])
-        body.appendChild(row("可被强化", names(enhancedBy[s.id]), "tt-enh"));
-
+      if (s.energy_cost != null && s.energy_cost !== "") body.appendChild(row("能量消耗", String(s.energy_cost), "tt-energy"));
+      if (s.tier !== "P") body.appendChild(row("前置技能", (s.requires && s.requires.length) ? linkList(s.requires) : "无"));
+      if (s.enhances && s.enhances.length) body.appendChild(row("强化", linkList(s.enhances), "tt-enh"));
+      if (enhancedBy[s.id]) body.appendChild(row("可被强化", linkList(enhancedBy[s.id]), "tt-enh"));
       if (s.status === "coming_soon") {
         var cs = el("div", "tt-soon");
         cs.appendChild(lockIcon());
@@ -387,111 +372,136 @@
         body.appendChild(cs);
       }
     }
-    tooltip.appendChild(body);
-    if (s.desc) tooltip.appendChild(el("p", "tt-desc", s.desc));
+    panelDetail.appendChild(body);
+    if (s.desc) panelDetail.appendChild(el("p", "tt-desc", s.desc));
   }
 
-  function positionTooltip(id) {
+  function update() {
+    var next = previewId || pinnedId || null;
+    var changed = next !== shownId;
+    shownId = next;
+    applyHighlight();
+    if (changed || true) renderPanel();
+  }
+  function preview(id) { if (previewId !== id) { previewId = id; update(); } }
+  function endPreview() { if (previewId) { previewId = null; update(); } }
+  function pin(id) { pinnedId = id; previewId = null; update(); }
+  function unpin() { pinnedId = null; previewId = null; update(); }
+
+  function reveal(id, smooth) {
     var n = nodeEls[id];
-    if (!n || tooltip.hidden) return;
-    var r = n.getBoundingClientRect();
-    var vw = document.documentElement.clientWidth, vh = window.innerHeight;
-    var m = 10, gap = 12;
-    tooltip.style.maxWidth = Math.min(320, vw - 2 * m) + "px";
-    tooltip.style.left = "0px"; tooltip.style.top = "0px";
-    var tw = tooltip.offsetWidth, th = tooltip.offsetHeight;
-    var left, top, side;
-    // 优先右侧，其次左侧，再其次下方 / 上方
-    var isP = byId[id] && byId[id].tier === "P";
-    if (r.right + gap + tw <= vw - m) { left = r.right + gap; side = "right"; }
-    else if (!isP && r.left - gap - tw >= m) { left = r.left - gap - tw; side = "left"; }
-    else { left = r.left + r.width / 2 - tw / 2; side = "v"; }
-    // 超能力在最右列：提示框放在上下方，避免挡住左侧被强化的 T2 技能
-    if (isP && side === "v") left = Math.max(r.left + r.width - tw, m);
-    if (side === "v") {
-      if (r.bottom + gap + th <= vh - m) top = r.bottom + gap;
-      else if (r.top - gap - th >= m) top = r.top - gap - th;
-      else top = vh - m - th;
-    } else {
-      top = r.top + r.height / 2 - th / 2;
-    }
-    left = Math.max(m, Math.min(left, vw - m - tw));
-    top = Math.max(m, Math.min(top, vh - m - th));
-    tooltip.style.left = Math.round(left) + "px";
-    tooltip.style.top = Math.round(top) + "px";
-    tooltip.dataset.side = side;
+    if (!n) return;
+    n.scrollIntoView({ block: "center", inline: "center", behavior: smooth ? "smooth" : "auto" });
   }
 
-  function show(id) {
-    activeId = id;
-    fillTooltip(byId[id]);
-    tooltip.hidden = false;
-    positionTooltip(id);
-    highlight(id);
+  /* ---------- 缩放 ---------- */
+  function setZoom(z) {
+    z = Math.round(Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, z)) * 10) / 10;
+    if (z === zoom) return;
+    var cx = (viewport.scrollLeft + viewport.clientWidth / 2) / zoom;
+    var cy = (viewport.scrollTop + viewport.clientHeight / 2) / zoom;
+    zoom = z;
+    canvas.style.zoom = String(z);
+    $("zoom-label").textContent = Math.round(z * 100) + "%";
+    viewport.scrollLeft = cx * z - viewport.clientWidth / 2;
+    viewport.scrollTop = cy * z - viewport.clientHeight / 2;
+    drawLinks();
   }
 
-  function hide() {
-    activeId = null;
-    pinnedId = null;
-    tooltip.hidden = true;
-    clearHighlight();
-  }
-
-  function nodeFrom(target) {
-    return target && target.closest ? target.closest(".node") : null;
-  }
+  function nodeFrom(t) { return t && t.closest ? t.closest(".node") : null; }
 
   function bind() {
-    var lastPointer = "mouse";
-    document.addEventListener("pointerdown", function (ev) { lastPointer = ev.pointerType || "mouse"; }, true);
-
-    document.addEventListener("mouseover", function (ev) {
-      if (lastPointer !== "mouse") return;
+    // 悬停预览（仅鼠标）
+    canvas.addEventListener("pointerover", function (ev) {
+      if (ev.pointerType !== "mouse") return;
       var n = nodeFrom(ev.target);
-      if (n && n.dataset.id !== activeId) { pinnedId = null; show(n.dataset.id); }
+      if (n) preview(n.dataset.id);
     });
-    document.addEventListener("mouseout", function (ev) {
-      if (lastPointer !== "mouse" || pinnedId) return;
+    canvas.addEventListener("pointerout", function (ev) {
+      if (ev.pointerType !== "mouse") return;
+      var n = nodeFrom(ev.target);
+      if (n && nodeFrom(ev.relatedTarget) !== n && document.activeElement !== n) endPreview();
+    });
+
+    // 拖拽平移（鼠标在空白处按下）
+    var drag = null, suppressClick = false;
+    viewport.addEventListener("pointerdown", function (ev) {
+      if (ev.pointerType !== "mouse" || ev.button !== 0 || nodeFrom(ev.target)) return;
+      drag = { x: ev.clientX, y: ev.clientY, sl: viewport.scrollLeft, st: viewport.scrollTop, moved: false };
+    });
+    window.addEventListener("pointermove", function (ev) {
+      if (!drag) return;
+      var dx = ev.clientX - drag.x, dy = ev.clientY - drag.y;
+      if (!drag.moved && Math.abs(dx) + Math.abs(dy) > 4) { drag.moved = true; viewport.classList.add("dragging"); }
+      if (drag.moved) {
+        viewport.scrollLeft = drag.sl - dx;
+        viewport.scrollTop = drag.st - dy;
+        ev.preventDefault();
+      }
+    });
+    window.addEventListener("pointerup", function () {
+      if (drag && drag.moved) suppressClick = true;
+      drag = null;
+      viewport.classList.remove("dragging");
+    });
+
+    // 点击：选中 / 取消
+    document.addEventListener("click", function (ev) {
+      if (suppressClick) { suppressClick = false; return; }
+      var j = ev.target.closest && ev.target.closest("[data-jump]");
+      if (j) { var id = j.dataset.jump; pin(id); reveal(id, true); nodeEls[id].focus({ preventScroll: true }); return; }
+      if (ev.target.closest && ev.target.closest("[data-close]")) { unpin(); return; }
+      var n = nodeFrom(ev.target);
+      if (n) { pin(n.dataset.id); return; }
+      if (ev.target.closest && ev.target.closest(".panel, .zoom, .topbar")) return;
+      unpin();
+    });
+
+    // 键盘
+    canvas.addEventListener("focusin", function (ev) {
       var n = nodeFrom(ev.target);
       if (!n) return;
-      var to = nodeFrom(ev.relatedTarget);
-      if (to === n) return;
-      if (!to && document.activeElement !== n) hide();
+      n.scrollIntoView({ block: "nearest", inline: "nearest" });
+      preview(n.dataset.id);
     });
-    document.addEventListener("click", function (ev) {
-      var n = nodeFrom(ev.target);
-      if (n) {
-        pinnedId = n.dataset.id;
-        show(n.dataset.id);
-      } else if (!tooltip.contains(ev.target)) {
-        hide();
-      }
-    });
-    document.addEventListener("focusin", function (ev) {
-      var n = nodeFrom(ev.target);
-      if (n) show(n.dataset.id);
-    });
-    document.addEventListener("focusout", function (ev) {
-      var n = nodeFrom(ev.target);
-      if (n && !nodeFrom(ev.relatedTarget) && !pinnedId) hide();
+    canvas.addEventListener("focusout", function (ev) {
+      if (!nodeFrom(ev.relatedTarget)) endPreview();
     });
     document.addEventListener("keydown", function (ev) {
-      if (ev.key === "Escape" && activeId) {
-        var cur = nodeEls[activeId];
-        hide();
-        if (cur) cur.blur();
-      } else if ((ev.key === "Enter" || ev.key === " ") && nodeFrom(ev.target)) {
+      var n = nodeFrom(ev.target);
+      if (ev.key === "Escape") {
+        unpin();
+        if (n) n.blur();
+      } else if ((ev.key === "Enter" || ev.key === " ") && n) {
         ev.preventDefault();
-        pinnedId = nodeFrom(ev.target).dataset.id;
-        show(pinnedId);
+        pin(n.dataset.id);
+      } else if ((ev.key === "+" || ev.key === "=") && !n && ev.target.tagName !== "INPUT") {
+        setZoom(zoom + ZOOM_STEP);
+      } else if (ev.key === "-" && !n && ev.target.tagName !== "INPUT") {
+        setZoom(zoom - ZOOM_STEP);
       }
     });
 
+    $("zoom-in").addEventListener("click", function () { setZoom(zoom + ZOOM_STEP); });
+    $("zoom-out").addEventListener("click", function () { setZoom(zoom - ZOOM_STEP); });
+    $("zoom-reset").addEventListener("click", function () { setZoom(1); });
+    viewport.addEventListener("wheel", function (ev) {
+      if (!ev.ctrlKey) return; // Ctrl/触控板捏合 = 缩放
+      ev.preventDefault();
+      setZoom(zoom + (ev.deltaY < 0 ? ZOOM_STEP : -ZOOM_STEP));
+    }, { passive: false });
+
     window.addEventListener("resize", scheduleDraw);
-    scroller.addEventListener("scroll", function () { if (activeId) positionTooltip(activeId); }, { passive: true });
-    window.addEventListener("scroll", function () { if (activeId) positionTooltip(activeId); }, { passive: true });
-    if (window.ResizeObserver) new ResizeObserver(scheduleDraw).observe(tree);
+    if (window.ResizeObserver) new ResizeObserver(scheduleDraw).observe(canvas);
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(scheduleDraw);
+
+    // 图例：窄屏默认收起
+    var legend = $("legend");
+    var mq = window.matchMedia("(max-width: 760px)");
+    function syncLegend() { legend.open = !mq.matches; }
+    syncLegend();
+    if (mq.addEventListener) mq.addEventListener("change", syncLegend);
+    legend.addEventListener("toggle", scheduleDraw);
   }
 
   function fail(msg) {
@@ -502,12 +512,10 @@
   }
 
   function init() {
-    tree = $("tree"); svg = $("links"); tooltip = $("tooltip"); scroller = $("tree-scroll");
+    canvas = $("canvas"); svg = $("links"); viewport = $("viewport");
+    panel = $("panel"); panelEmpty = $("panel-empty"); panelDetail = $("panel-detail");
     fetch("skills.json", { cache: "no-cache" })
-      .then(function (r) {
-        if (!r.ok) throw new Error("HTTP " + r.status);
-        return r.json();
-      })
+      .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
       .then(function (json) {
         if (!json || !Array.isArray(json.skills)) throw new Error("skills.json 缺少 skills 数组");
         data = json;
@@ -515,15 +523,12 @@
         validate();
         render();
         buildDefs();
-        drawLinks();
         bind();
+        drawLinks();
         document.body.classList.add("ready");
       })
-      .catch(function (err) {
-        fail("技能数据加载失败：" + err.message + "（如果是直接双击打开的本地文件，请用本地服务器访问）");
-      });
+      .catch(function (err) { fail("技能数据加载失败：" + err.message + "（如果是直接双击打开的本地文件，请用本地服务器访问）"); });
   }
-
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();
 })();
