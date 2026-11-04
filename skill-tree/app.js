@@ -553,6 +553,12 @@
       if (n && nodeFrom(ev.relatedTarget) !== n && document.activeElement !== n) endPreview();
     });
 
+    // 兜底：鼠标移到任何非技能卡区域时结束悬停预览（防止滚动或动画后残留）
+    document.addEventListener("pointerover", function (ev) {
+      if (ev.pointerType !== "mouse" || !previewId || nodeFrom(ev.target)) return;
+      if (document.activeElement !== nodeEls[previewId]) endPreview();
+    });
+
     // 拖拽平移（鼠标在空白处按下）
     var drag = null, suppressClick = false;
     viewport.addEventListener("pointerdown", function (ev) {
