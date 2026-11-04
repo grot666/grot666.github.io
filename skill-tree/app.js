@@ -9,7 +9,8 @@
 
   var data = null, byId = {}, nodeEls = {}, edges = [], enhancedBy = {};
   var groups = {};           // T2 流派 key -> 分组元素
-  var STORE_KEY = "supershero.skilltree.collapsed";
+  var STORE_KEY = "supershero.skilltree.collapsed.v2"; // {流派 key: 是否折叠}
+  var OLD_STORE_KEY = "supershero.skilltree.collapsed";
   var canvas, svg, viewport, panel, panelEmpty, panelDetail;
   var pinnedId = null, previewId = null, shownId = null;
   var zoom = 1;
@@ -103,7 +104,7 @@
       var cs = el("span", "soon");
       cs.appendChild(lockIcon());
       cs.appendChild(document.createTextNode("即将开放"));
-      n.appendChild(cs);
+      text.appendChild(cs);
     }
     nodeEls[s.id] = n;
     return n;
@@ -477,12 +478,23 @@
 
   /* ---------- T2 流派折叠 ---------- */
   var ANIM_MS = 260;
+  // 返回 {key: bool}；没有记录的流派使用 skills.json 里的 default_collapsed
   function loadCollapsed() {
-    try { return JSON.parse(localStorage.getItem(STORE_KEY) || "[]") || []; } catch (e) { return []; }
+    var map = {};
+    try {
+      var raw = localStorage.getItem(STORE_KEY);
+      if (raw) map = JSON.parse(raw) || {};
+      else {
+        var old = JSON.parse(localStorage.getItem(OLD_STORE_KEY) || "null");
+        if (Array.isArray(old)) old.forEach(function (k) { map[k] = true; });
+      }
+    } catch (e) { map = {}; }
+    return map;
   }
   function saveCollapsed() {
-    var list = Object.keys(groups).filter(function (k) { return groups[k].classList.contains("collapsed"); });
-    try { localStorage.setItem(STORE_KEY, JSON.stringify(list)); } catch (e) { /* 隐私模式等情况下忽略 */ }
+    var map = {};
+    Object.keys(groups).forEach(function (k) { map[k] = groups[k].classList.contains("collapsed"); });
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(map)); } catch (e) { /* 隐私模式等情况下忽略 */ }
   }
   function followLinks(ms) {
     var end = performance.now() + ms;
@@ -669,7 +681,9 @@
         var saved = loadCollapsed();
         Object.keys(groups).forEach(function (k) {
           groups[k]._head.setAttribute("aria-expanded", "true");
-          if (saved.indexOf(k) >= 0) setCollapsed(k, true, true);
+          var meta = (data.lineages || {})[k] || {};
+          var want = Object.prototype.hasOwnProperty.call(saved, k) ? !!saved[k] : !!meta.default_collapsed;
+          if (want) setCollapsed(k, true, true);
         });
         buildDefs();
         bind();

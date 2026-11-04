@@ -12,6 +12,10 @@
   --speed: #ffd60a; --speed-bg: #4a3c00;
   --shadow: #ff3d9a; --shadow-bg: #4a0f2c;
   --tech: #9dff3a; --tech-bg: #1f3d06;
+  --inferno: #ff8a1f; --inferno-bg: #4a2200;
+  --frost: #a8e6ff; --frost-bg: #0c2e44;
+  --feral: #c98a4b; --feral-bg: #3d240c;
+  --muay_thai: #21c07a; --muay_thai-bg: #06331f;
   --p: #b066ff; --p-bg: #2c1250; --p-glow: #d59bff;
   --yellow: #ffd60a;
   --red: #e8202a;
@@ -211,7 +215,7 @@ button { font: inherit; }
 .col-tag { font-family: var(--font-comic); font-weight: 400; font-size: 15px; padding: 1px 7px; border: 2px solid var(--ink); color: #111; background: var(--yellow); }
 .col[data-col="T0"] .col-tag { background: var(--t0); }
 .col[data-col="T1"] .col-tag { background: var(--t1); color: #fff; }
-.col[data-col="T2"] .col-tag { background: linear-gradient(90deg, var(--power) 16.6%, var(--radiant) 16.6% 33.3%, var(--speed) 33.3% 50%, #fff 50% 66.6%, var(--shadow) 66.6% 83.3%, var(--tech) 83.3%); }
+.col[data-col="T2"] .col-tag { background: linear-gradient(90deg, var(--power) 10%, var(--radiant) 10% 20%, var(--speed) 20% 30%, #fff 30% 40%, var(--shadow) 40% 50%, var(--tech) 50% 60%, var(--inferno) 60% 70%, var(--frost) 70% 80%, var(--feral) 80% 90%, var(--muay_thai) 90%); }
 .col[data-col="P"] .col-tag { background: var(--p); color: #fff; }
 .col[data-col="P"] .col-head { background: linear-gradient(100deg, #2c1250, #1b2032); }
 
@@ -679,3 +683,44 @@ button { font: inherit; }
   .tt-icon { padding: 8px 0; }
   .tt-icon img { width: 96px; height: 96px; filter: drop-shadow(3px 3px 0 #000); }
 }
+
+/* ---------- v4：新流派配色 ---------- */
+.chip-lin.lin-inferno { color: #ffd2a3; border-color: var(--inferno); background: var(--inferno-bg); }
+.lin-inferno.group { border-color: color-mix(in srgb, var(--inferno) 45%, transparent); background: color-mix(in srgb, var(--inferno) 5%, transparent); }
+.lin-inferno .group-head { background: var(--inferno); color: #111; }
+.tier-T2.lin-inferno { border-color: var(--inferno); background: linear-gradient(135deg, color-mix(in srgb, var(--inferno) 32%, #000), var(--inferno-bg)); }
+.tier-T2.lin-inferno .node-en { color: #ffd2a3; }
+.link-req.lin-inferno { stroke: var(--inferno); }
+.arrowhead.arrow-inferno { fill: var(--inferno); }
+.panel-detail.lin-inferno { --tt-accent: var(--inferno); }
+.lin-inferno .tt-head { color: #111; }
+.chip-lin.lin-frost { color: #e3f7ff; border-color: var(--frost); background: var(--frost-bg); }
+.lin-frost.group { border-color: color-mix(in srgb, var(--frost) 45%, transparent); background: color-mix(in srgb, var(--frost) 5%, transparent); }
+.lin-frost .group-head { background: var(--frost); color: #111; }
+.tier-T2.lin-frost { border-color: var(--frost); background: linear-gradient(135deg, color-mix(in srgb, var(--frost) 32%, #000), var(--frost-bg)); }
+.tier-T2.lin-frost .node-en { color: #e3f7ff; }
+.link-req.lin-frost { stroke: var(--frost); }
+.arrowhead.arrow-frost { fill: var(--frost); }
+.panel-detail.lin-frost { --tt-accent: var(--frost); }
+.lin-frost .tt-head { color: #111; }
+.chip-lin.lin-feral { color: #f0cfa8; border-color: var(--feral); background: var(--feral-bg); }
+.lin-feral.group { border-color: color-mix(in srgb, var(--feral) 45%, transparent); background: color-mix(in srgb, var(--feral) 5%, transparent); }
+.lin-feral .group-head { background: var(--feral); color: #111; }
+.tier-T2.lin-feral { border-color: var(--feral); background: linear-gradient(135deg, color-mix(in srgb, var(--feral) 32%, #000), var(--feral-bg)); }
+.tier-T2.lin-feral .node-en { color: #f0cfa8; }
+.link-req.lin-feral { stroke: var(--feral); }
+.arrowhead.arrow-feral { fill: var(--feral); }
+.panel-detail.lin-feral { --tt-accent: var(--feral); }
+.lin-feral .tt-head { color: #111; }
+.chip-lin.lin-muay_thai { color: #b5f5d6; border-color: var(--muay_thai); background: var(--muay_thai-bg); }
+.lin-muay_thai.group { border-color: color-mix(in srgb, var(--muay_thai) 45%, transparent); background: color-mix(in srgb, var(--muay_thai) 5%, transparent); }
+.lin-muay_thai .group-head { background: var(--muay_thai); color: #111; }
+.tier-T2.lin-muay_thai { border-color: var(--muay_thai); background: linear-gradient(135deg, color-mix(in srgb, var(--muay_thai) 32%, #000), var(--muay_thai-bg)); }
+.tier-T2.lin-muay_thai .node-en { color: #b5f5d6; }
+.link-req.lin-muay_thai { stroke: var(--muay_thai); }
+.arrowhead.arrow-muay_thai { fill: var(--muay_thai); }
+.panel-detail.lin-muay_thai { --tt-accent: var(--muay_thai); }
+.lin-muay_thai .tt-head { color: #111; }
+.tier-T2.lin-inferno { box-shadow: 4px 4px 0 var(--ink), inset 0 -10px 16px rgba(255, 138, 31, 0.25); }
+.tier-T2.lin-frost { box-shadow: 4px 4px 0 var(--ink), inset 0 0 12px rgba(168, 230, 255, 0.25); }
+.node-text .soon { align-self: flex-start; }

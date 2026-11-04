@@ -23,6 +23,26 @@
     "tech": {
       "name_zh": "科技装甲",
       "name_en": "Tech Armor"
+    },
+    "inferno": {
+      "name_zh": "烈焰系",
+      "name_en": "Inferno",
+      "default_collapsed": true
+    },
+    "frost": {
+      "name_zh": "寒冰系",
+      "name_en": "Frost",
+      "default_collapsed": true
+    },
+    "feral": {
+      "name_zh": "兽魂系",
+      "name_en": "Feral",
+      "default_collapsed": true
+    },
+    "muay_thai": {
+      "name_zh": "泰拳",
+      "name_en": "Muay Thai",
+      "default_collapsed": true
     }
   },
   "power_groups": {
@@ -50,7 +70,8 @@
       "name_en": "Idle",
       "tier": "state",
       "requires": [],
-      "desc": "放松的站立姿态。"
+      "desc": "放松的站立姿态。",
+      "icon": "images/svg/idle.svg"
     },
     {
       "id": "hit_recoil",
@@ -58,7 +79,8 @@
       "name_en": "Hit Recoil",
       "tier": "state",
       "requires": [],
-      "desc": "被击中时头部和上身后仰。"
+      "desc": "被击中时头部和上身后仰。",
+      "icon": "images/svg/hit_recoil.svg"
     },
     {
       "id": "knocked_flying",
@@ -66,7 +88,8 @@
       "name_en": "Knocked Flying",
       "tier": "state",
       "requires": [],
-      "desc": "受到重击后身体腾空向后飞出。"
+      "desc": "受到重击后身体腾空向后飞出。",
+      "icon": "images/svg/knocked_flying.svg"
     },
     {
       "id": "knocked_down",
@@ -74,7 +97,8 @@
       "name_en": "Knocked Down",
       "tier": "state",
       "requires": [],
-      "desc": "倒在地上。"
+      "desc": "倒在地上。",
+      "icon": "images/svg/knocked_down.svg"
     },
     {
       "id": "getting_up",
@@ -82,7 +106,8 @@
       "name_en": "Getting Up",
       "tier": "state",
       "requires": [],
-      "desc": "单膝跪地，撑地站起。"
+      "desc": "单膝跪地，撑地站起。",
+      "icon": "images/svg/getting_up.svg"
     },
     {
       "id": "run",
@@ -90,7 +115,8 @@
       "name_en": "Run",
       "tier": "state",
       "requires": [],
-      "desc": "冲刺奔跑。"
+      "desc": "冲刺奔跑。",
+      "icon": "images/svg/run.svg"
     },
     {
       "id": "wild_swing",
@@ -339,7 +365,8 @@
       "requires": [
         "straight_punch"
       ],
-      "desc": "拉开架势蓄满力量，一拳轰出。起手很长，命中后伤害极高。"
+      "desc": "拉开架势蓄满力量，一拳轰出。起手很长，命中后伤害极高。",
+      "icon": "images/svg/charged_punch.svg"
     },
     {
       "id": "hero_landing",
@@ -352,7 +379,8 @@
         "low_sweep",
         "straight_punch"
       ],
-      "desc": "从高处单膝跪地砸落，落点周围的敌人被震退。"
+      "desc": "从高处单膝跪地砸落，落点周围的敌人被震退。",
+      "icon": "images/svg/hero_landing.svg"
     },
     {
       "id": "aerial_slam",
@@ -364,7 +392,8 @@
       "requires": [
         "shoulder_throw"
       ],
-      "desc": "抓住对手跃起，在空中将其狠狠砸向地面。"
+      "desc": "抓住对手跃起，在空中将其狠狠砸向地面。",
+      "icon": "images/svg/aerial_slam.svg"
     },
     {
       "id": "ground_quake",
@@ -377,7 +406,8 @@
       "requires": [
         "hero_landing"
       ],
-      "desc": "一脚踏碎地面，冲击波掀翻周围所有人。"
+      "desc": "一脚踏碎地面，冲击波掀翻周围所有人。",
+      "icon": "images/svg/ground_quake.svg"
     },
     {
       "id": "energy_blast",
@@ -391,7 +421,8 @@
         "straight_punch",
         "breath_control"
       ],
-      "desc": "将体内光能聚于掌心，向前推出一道冲击波。"
+      "desc": "将体内光能聚于掌心，向前推出一道冲击波。",
+      "icon": "images/svg/energy_blast.svg"
     },
     {
       "id": "dash_punch",
@@ -405,7 +436,8 @@
         "jab",
         "sidestep"
       ],
-      "desc": "身体化作一道光芒冲向对手，同时打出一拳。"
+      "desc": "身体化作一道光芒冲向对手，同时打出一拳。",
+      "icon": "images/svg/dash_punch.svg"
     },
     {
       "id": "radiant_barrier",
@@ -420,7 +452,8 @@
         "parry",
         "breath_control"
       ],
-      "desc": "在身前展开一面光之屏障，挡下一次攻击。"
+      "desc": "在身前展开一面光之屏障，挡下一次攻击。",
+      "icon": "images/svg/radiant_barrier.svg"
     },
     {
       "id": "flash_step",
@@ -432,7 +465,8 @@
       "requires": [
         "sidestep"
       ],
-      "desc": "瞬间移动到对手身侧，几乎没有收招空档。"
+      "desc": "瞬间移动到对手身侧，几乎没有收招空档。",
+      "icon": "images/svg/flash_step.svg"
     },
     {
       "id": "rapid_combo",
@@ -445,7 +479,8 @@
         "jab",
         "elbow_strike"
       ],
-      "desc": "在一次攻击里打出一连串快拳与肘击，单发伤害低但段数多。"
+      "desc": "在一次攻击里打出一连串快拳与肘击，单发伤害低但段数多。",
+      "icon": "images/svg/rapid_combo.svg"
     },
     {
       "id": "whirlwind_kick",
@@ -457,7 +492,8 @@
       "requires": [
         "roundhouse_kick"
       ],
-      "desc": "腾空旋转连续踢出两腿。"
+      "desc": "腾空旋转连续踢出两腿。",
+      "icon": "images/svg/whirlwind_kick.svg"
     },
     {
       "id": "afterimage",
@@ -470,7 +506,8 @@
       "requires": [
         "flash_step"
       ],
-      "desc": "高速移动留下残影，诱使对手攻击错误的位置。"
+      "desc": "高速移动留下残影，诱使对手攻击错误的位置。",
+      "icon": "images/svg/afterimage.svg"
     },
     {
       "id": "wild_horse_mane",
@@ -483,7 +520,8 @@
         "clinch",
         "breath_control"
       ],
-      "desc": "弓步上前，一手分开对手的手臂，另一手顺势将其掀出。"
+      "desc": "弓步上前，一手分开对手的手臂，另一手顺势将其掀出。",
+      "icon": "images/svg/wild_horse_mane.svg"
     },
     {
       "id": "white_crane",
@@ -495,7 +533,8 @@
       "requires": [
         "parry"
       ],
-      "desc": "一手上架、一手下按，同时化解上下两路攻击。"
+      "desc": "一手上架、一手下按，同时化解上下两路攻击。",
+      "icon": "images/svg/white_crane.svg"
     },
     {
       "id": "grasp_sparrow_tail",
@@ -508,7 +547,8 @@
         "parry",
         "clinch"
       ],
-      "desc": "掤、捋、挤、按四法连贯，把对手的力量引向一旁后反推。"
+      "desc": "掤、捋、挤、按四法连贯，把对手的力量引向一旁后反推。",
+      "icon": "images/svg/grasp_sparrow_tail.svg"
     },
     {
       "id": "cloud_hands",
@@ -521,7 +561,8 @@
         "parry",
         "breath_control"
       ],
-      "desc": "双手如行云般交替画圆，持续拨开来袭的攻击。"
+      "desc": "双手如行云般交替画圆，持续拨开来袭的攻击。",
+      "icon": "images/svg/cloud_hands.svg"
     },
     {
       "id": "twin_peaks",
@@ -534,7 +575,8 @@
         "straight_punch",
         "breath_control"
       ],
-      "desc": "双拳从两侧弧线合击对手双耳，攻击意图最直接的太极招式。"
+      "desc": "双拳从两侧弧线合击对手双耳，攻击意图最直接的太极招式。",
+      "icon": "images/svg/twin_peaks.svg"
     },
     {
       "id": "turn_left_heel_kick",
@@ -548,7 +590,8 @@
         "front_kick",
         "sidestep"
       ],
-      "desc": "转身合抱双手，提膝后以左脚跟向前蹬出。起手较长，蹬出瞬间力道集中。"
+      "desc": "转身合抱双手，提膝后以左脚跟向前蹬出。起手较长，蹬出瞬间力道集中。",
+      "icon": "images/svg/turn_left_heel_kick.svg"
     },
     {
       "id": "single_whip",
@@ -561,7 +604,8 @@
       "requires": [
         "cloud_hands"
       ],
-      "desc": "一手勾、一手推掌，长距离的推击。"
+      "desc": "一手勾、一手推掌，长距离的推击。",
+      "icon": "images/svg/single_whip.svg"
     },
     {
       "id": "smoke_vanish",
@@ -574,7 +618,8 @@
         "sidestep",
         "throw_object"
       ],
-      "desc": "摔下烟雾弹，在浓烟里消失，下一回合从对手的盲区出现。"
+      "desc": "摔下烟雾弹，在浓烟里消失，下一回合从对手的盲区出现。",
+      "icon": "images/svg/smoke_vanish.svg"
     },
     {
       "id": "backstab",
@@ -587,7 +632,8 @@
         "elbow_strike",
         "sidestep"
       ],
-      "desc": "绕到对手身后发动突袭。对手正在出招的收招帧里命中，伤害翻倍。"
+      "desc": "绕到对手身后发动突袭。对手正在出招的收招帧里命中，伤害翻倍。",
+      "icon": "images/svg/backstab.svg"
     },
     {
       "id": "shadow_bind",
@@ -601,7 +647,8 @@
         "breath_control"
       ],
       "desc": "让自己的影子缠住对手的脚，使其下一回合起手变慢。",
-      "energy_cost": 20
+      "energy_cost": 20,
+      "icon": "images/svg/shadow_bind.svg"
     },
     {
       "id": "silent_takedown",
@@ -614,7 +661,8 @@
         "shoulder_throw",
         "clinch"
       ],
-      "desc": "从背后锁喉压倒对手，全程不发出一点声音。"
+      "desc": "从背后锁喉压倒对手，全程不发出一点声音。",
+      "icon": "images/svg/silent_takedown.svg"
     },
     {
       "id": "shadow_clone",
@@ -629,7 +677,8 @@
       ],
       "desc": "分出数个影子同时出招，对手无法分辨哪一个是真身。",
       "energy_cost": 35,
-      "status": "coming_soon"
+      "status": "coming_soon",
+      "icon": "images/svg/shadow_clone.svg"
     },
     {
       "id": "rocket_punch",
@@ -642,7 +691,8 @@
         "straight_punch"
       ],
       "desc": "装甲拳套点燃推进器脱手飞出，远距离重击后自动飞回。",
-      "energy_cost": 25
+      "energy_cost": 25,
+      "icon": "images/svg/rocket_punch.svg"
     },
     {
       "id": "repulsor_blast",
@@ -656,7 +706,8 @@
         "parry"
       ],
       "desc": "掌心的冲击炮近距离发射，把对手连同防御一起推开。",
-      "energy_cost": 20
+      "energy_cost": 20,
+      "icon": "images/svg/repulsor_blast.svg"
     },
     {
       "id": "armor_brace",
@@ -670,7 +721,8 @@
         "cover_up"
       ],
       "desc": "装甲锁死关节硬接攻击，格挡帧更长，但期间无法移动。",
-      "energy_cost": 10
+      "energy_cost": 10,
+      "icon": "images/svg/armor_brace.svg"
     },
     {
       "id": "thruster_kick",
@@ -684,7 +736,8 @@
         "roundhouse_kick"
       ],
       "desc": "脚跟推进器点火加速的飞踢，起手短，冲击距离长。",
-      "energy_cost": 15
+      "energy_cost": 15,
+      "icon": "images/svg/thruster_kick.svg"
     },
     {
       "id": "overdrive",
@@ -698,7 +751,291 @@
       ],
       "desc": "解除装甲输出限制，所有科技招式起手缩短，能量持续流失。",
       "energy_cost": "持续",
-      "status": "coming_soon"
+      "status": "coming_soon",
+      "icon": "images/svg/overdrive.svg"
+    },
+    {
+      "id": "flame_fist",
+      "name_zh": "烈焰拳",
+      "name_en": "Flame Fist",
+      "tier": "T2",
+      "lineage": "inferno",
+      "type": "active",
+      "requires": [
+        "straight_punch"
+      ],
+      "desc": "拳头燃起烈焰后重拳轰出，命中后对手持续灼烧两回合。",
+      "energy_cost": 15,
+      "icon": "images/svg/flame_fist.svg"
+    },
+    {
+      "id": "fire_wheel_kick",
+      "name_zh": "火轮踢",
+      "name_en": "Fire Wheel Kick",
+      "tier": "T2",
+      "lineage": "inferno",
+      "type": "active",
+      "requires": [
+        "roundhouse_kick"
+      ],
+      "desc": "旋身踢出一圈火轮，扫中前方所有目标。",
+      "energy_cost": 20,
+      "icon": "images/svg/fire_wheel_kick.svg"
+    },
+    {
+      "id": "ember_dash",
+      "name_zh": "余烬冲刺",
+      "name_en": "Ember Dash",
+      "tier": "T2",
+      "lineage": "inferno",
+      "type": "active",
+      "requires": [
+        "sidestep"
+      ],
+      "desc": "脚下爆出火星向前冲刺，身后留下一串燃烧的余烬。",
+      "energy_cost": 10,
+      "icon": "images/svg/ember_dash.svg"
+    },
+    {
+      "id": "heat_aura",
+      "name_zh": "灼热斗气",
+      "name_en": "Heat Aura",
+      "tier": "T2",
+      "lineage": "inferno",
+      "type": "passive",
+      "requires": [
+        "breath_control"
+      ],
+      "desc": "全身散发高温，近身攻击你的对手会被烫伤。",
+      "energy_cost": "持续",
+      "icon": "images/svg/heat_aura.svg"
+    },
+    {
+      "id": "inferno_eruption",
+      "name_zh": "炎爆",
+      "name_en": "Inferno Eruption",
+      "tier": "T2",
+      "lineage": "inferno",
+      "type": "ultimate",
+      "requires": [
+        "breath_control",
+        "low_sweep"
+      ],
+      "desc": "一拳砸向地面，脚下喷出冲天火柱，吞没周围的一切。",
+      "energy_cost": "全部",
+      "status": "coming_soon",
+      "icon": "images/svg/inferno_eruption.svg"
+    },
+    {
+      "id": "ice_palm",
+      "name_zh": "寒冰掌",
+      "name_en": "Ice Palm",
+      "tier": "T2",
+      "lineage": "frost",
+      "type": "active",
+      "requires": [
+        "jab"
+      ],
+      "desc": "掌心凝出寒气拍向对手，命中后对手下一回合起手变慢。",
+      "energy_cost": 15,
+      "icon": "images/svg/ice_palm.svg"
+    },
+    {
+      "id": "frost_shield",
+      "name_zh": "冰甲",
+      "name_en": "Frost Shield",
+      "tier": "T2",
+      "lineage": "frost",
+      "type": "active",
+      "requires": [
+        "parry"
+      ],
+      "desc": "在前臂凝结出六角冰盾，格挡成功时冻住来袭的拳脚。",
+      "energy_cost": 20,
+      "icon": "images/svg/frost_shield.svg"
+    },
+    {
+      "id": "glacier_slide",
+      "name_zh": "冰面滑行",
+      "name_en": "Glacier Slide",
+      "tier": "T2",
+      "lineage": "frost",
+      "type": "active",
+      "requires": [
+        "sidestep",
+        "low_sweep"
+      ],
+      "desc": "把脚下冻成冰面，压低身体滑铲到对手脚下。",
+      "energy_cost": 10,
+      "icon": "images/svg/glacier_slide.svg"
+    },
+    {
+      "id": "icicle_spear",
+      "name_zh": "冰锥突刺",
+      "name_en": "Icicle Spear",
+      "tier": "T2",
+      "lineage": "frost",
+      "type": "active",
+      "requires": [
+        "throw_object",
+        "straight_punch"
+      ],
+      "desc": "凝出一根锋利的冰锥掷向远处的对手。",
+      "energy_cost": 25,
+      "icon": "images/svg/icicle_spear.svg"
+    },
+    {
+      "id": "absolute_zero",
+      "name_zh": "绝对零度",
+      "name_en": "Absolute Zero",
+      "tier": "T2",
+      "lineage": "frost",
+      "type": "ultimate",
+      "requires": [
+        "breath_control"
+      ],
+      "desc": "释放极寒领域，冻结周围所有对手一回合。",
+      "energy_cost": "全部",
+      "status": "coming_soon",
+      "icon": "images/svg/absolute_zero.svg"
+    },
+    {
+      "id": "tiger_claw",
+      "name_zh": "虎爪",
+      "name_en": "Tiger Claw",
+      "tier": "T2",
+      "lineage": "feral",
+      "type": "active",
+      "requires": [
+        "jab",
+        "clinch"
+      ],
+      "desc": "五指弯曲如虎爪，撕开对手的防御。",
+      "icon": "images/svg/tiger_claw.svg"
+    },
+    {
+      "id": "pounce",
+      "name_zh": "猛扑",
+      "name_en": "Pounce",
+      "tier": "T2",
+      "lineage": "feral",
+      "type": "active",
+      "requires": [
+        "front_kick",
+        "shove"
+      ],
+      "desc": "像猎豹一样压低身体，从远处猛扑上去。",
+      "icon": "images/svg/pounce.svg"
+    },
+    {
+      "id": "wolf_howl",
+      "name_zh": "狼嚎",
+      "name_en": "Wolf Howl",
+      "tier": "T2",
+      "lineage": "feral",
+      "type": "active",
+      "requires": [
+        "breath_control"
+      ],
+      "desc": "仰天长啸，震慑对手，自己下一招伤害提升。",
+      "icon": "images/svg/wolf_howl.svg"
+    },
+    {
+      "id": "bear_hug",
+      "name_zh": "熊抱",
+      "name_en": "Bear Hug",
+      "tier": "T2",
+      "lineage": "feral",
+      "type": "active",
+      "requires": [
+        "clinch"
+      ],
+      "desc": "用双臂死死箍住对手的身体，挤压到对方无法呼吸。",
+      "icon": "images/svg/bear_hug.svg"
+    },
+    {
+      "id": "beast_form",
+      "name_zh": "兽化",
+      "name_en": "Beast Form",
+      "tier": "T2",
+      "lineage": "feral",
+      "type": "active",
+      "requires": [
+        "breath_control",
+        "tiger_claw"
+      ],
+      "desc": "释放体内的兽魂，力量和速度暴涨，但无法使用防御招式。",
+      "energy_cost": "持续",
+      "status": "coming_soon",
+      "icon": "images/svg/beast_form.svg"
+    },
+    {
+      "id": "teep",
+      "name_zh": "泰式前蹬",
+      "name_en": "Teep",
+      "tier": "T2",
+      "lineage": "muay_thai",
+      "type": "active",
+      "requires": [
+        "front_kick"
+      ],
+      "desc": "用脚掌蹬向对手腹部，打断对方的起手并拉开距离。",
+      "icon": "images/svg/teep.svg"
+    },
+    {
+      "id": "thai_clinch_knee",
+      "name_zh": "箍颈膝撞",
+      "name_en": "Clinch Knee",
+      "tier": "T2",
+      "lineage": "muay_thai",
+      "type": "active",
+      "requires": [
+        "clinch"
+      ],
+      "desc": "双手箍住对手后颈往下拉，同时提膝向上猛撞。",
+      "icon": "images/svg/thai_clinch_knee.svg"
+    },
+    {
+      "id": "spinning_elbow",
+      "name_zh": "转身肘",
+      "name_en": "Spinning Elbow",
+      "tier": "T2",
+      "lineage": "muay_thai",
+      "type": "active",
+      "requires": [
+        "elbow_strike",
+        "sidestep"
+      ],
+      "desc": "背身旋转一圈，用肘尖横扫对手的头部。",
+      "icon": "images/svg/spinning_elbow.svg"
+    },
+    {
+      "id": "low_kick",
+      "name_zh": "低扫踢",
+      "name_en": "Low Kick",
+      "tier": "T2",
+      "lineage": "muay_thai",
+      "type": "active",
+      "requires": [
+        "roundhouse_kick"
+      ],
+      "desc": "用小腿胫骨扫踢对手大腿，连续命中会让对手站不稳。",
+      "icon": "images/svg/low_kick.svg"
+    },
+    {
+      "id": "flying_knee",
+      "name_zh": "飞膝",
+      "name_en": "Flying Knee",
+      "tier": "T2",
+      "lineage": "muay_thai",
+      "type": "active",
+      "requires": [
+        "thai_clinch_knee",
+        "front_kick"
+      ],
+      "desc": "助跑起跳，在空中提膝撞向对手的下巴。",
+      "status": "coming_soon",
+      "icon": "images/svg/flying_knee.svg"
     },
     {
       "id": "super_strength",
@@ -712,7 +1049,8 @@
         "charged_punch"
       ],
       "desc": "远超人类极限的力量，所有物理攻击伤害大幅提升。",
-      "requires": []
+      "requires": [],
+      "icon": "images/svg/super_strength.svg"
     },
     {
       "id": "invulnerability",
@@ -723,7 +1061,8 @@
       "type": "passive",
       "energy_cost": "吸收伤害时消耗",
       "desc": "身体近乎无法被伤害，吸收的伤害会转化为能量消耗。",
-      "requires": []
+      "requires": [],
+      "icon": "images/svg/invulnerability.svg"
     },
     {
       "id": "super_speed",
@@ -737,7 +1076,8 @@
         "flash_step"
       ],
       "desc": "以超越感知的速度移动，周围的一切仿佛静止。",
-      "requires": []
+      "requires": [],
+      "icon": "images/svg/super_speed.svg"
     },
     {
       "id": "flight",
@@ -752,7 +1092,8 @@
         "thruster_kick"
       ],
       "desc": "无需任何装置即可自由飞行。",
-      "requires": []
+      "requires": [],
+      "icon": "images/svg/flight.svg"
     },
     {
       "id": "heat_vision",
@@ -763,7 +1104,8 @@
       "type": "active",
       "energy_cost": 30,
       "desc": "双眼射出高温光束。",
-      "requires": []
+      "requires": [],
+      "icon": "images/svg/heat_vision.svg"
     },
     {
       "id": "energy_shield",
@@ -774,7 +1116,8 @@
       "type": "active",
       "energy_cost": "持续",
       "desc": "在身体周围展开半透明的能量球体，抵挡攻击。",
-      "requires": []
+      "requires": [],
+      "icon": "images/svg/energy_shield.svg"
     },
     {
       "id": "power_burst",
@@ -785,7 +1128,8 @@
       "type": "ultimate",
       "energy_cost": "全部",
       "desc": "仅在过载状态下可用，释放全部能量产生巨大冲击。",
-      "requires": []
+      "requires": [],
+      "icon": "images/svg/power_burst.svg"
     },
     {
       "id": "freeze_breath",
@@ -796,7 +1140,12 @@
       "type": "active",
       "energy_cost": 25,
       "desc": "呼出极寒气流，冻结前方的目标。",
-      "requires": []
+      "requires": [],
+      "enhances": [
+        "ice_palm",
+        "glacier_slide"
+      ],
+      "icon": "images/svg/freeze_breath.svg"
     },
     {
       "id": "telekinesis",
@@ -807,7 +1156,8 @@
       "type": "active",
       "energy_cost": 40,
       "desc": "用意念移动物体或控制对手的行动。",
-      "requires": []
+      "requires": [],
+      "icon": "images/svg/telekinesis.svg"
     }
   ]
 }
