@@ -15,6 +15,14 @@
     "taichi": {
       "name_zh": "太极传承",
       "name_en": "Tai Chi"
+    },
+    "shadow": {
+      "name_zh": "暗影系",
+      "name_en": "Shadow"
+    },
+    "tech": {
+      "name_zh": "科技装甲",
+      "name_en": "Tech Armor"
     }
   },
   "power_groups": {
@@ -92,7 +100,8 @@
       "cost": 1,
       "type": "active",
       "requires": [],
-      "desc": "毫无章法地大幅度甩臂出拳，力量大但容易失去平衡。"
+      "desc": "毫无章法地大幅度甩臂出拳，力量大但容易失去平衡。",
+      "icon": "images/svg/wild_swing.svg"
     },
     {
       "id": "shove",
@@ -102,7 +111,8 @@
       "cost": 1,
       "type": "active",
       "requires": [],
-      "desc": "双手猛推对手，制造距离。"
+      "desc": "双手猛推对手，制造距离。",
+      "icon": "images/svg/shove.svg"
     },
     {
       "id": "crude_kick",
@@ -112,7 +122,8 @@
       "cost": 1,
       "type": "active",
       "requires": [],
-      "desc": "抬脚向前蹬踹，没有技巧可言。"
+      "desc": "抬脚向前蹬踹，没有技巧可言。",
+      "icon": "images/svg/crude_kick.svg"
     },
     {
       "id": "headbutt",
@@ -122,7 +133,8 @@
       "cost": 1,
       "type": "active",
       "requires": [],
-      "desc": "用头猛撞对手，伤人也伤己。"
+      "desc": "用头猛撞对手，伤人也伤己。",
+      "icon": "images/svg/headbutt.svg"
     },
     {
       "id": "cover_up",
@@ -132,7 +144,8 @@
       "cost": 1,
       "type": "active",
       "requires": [],
-      "desc": "本能地用双臂护住头部。"
+      "desc": "本能地用双臂护住头部。",
+      "icon": "images/svg/cover_up.svg"
     },
     {
       "id": "flinch_dodge",
@@ -142,7 +155,8 @@
       "cost": 1,
       "type": "active",
       "requires": [],
-      "desc": "身体本能地歪向一侧躲避攻击。"
+      "desc": "身体本能地歪向一侧躲避攻击。",
+      "icon": "images/svg/flinch_dodge.svg"
     },
     {
       "id": "throw_object",
@@ -152,7 +166,8 @@
       "cost": 1,
       "type": "active",
       "requires": [],
-      "desc": "抓起身边的东西扔向对手。"
+      "desc": "抓起身边的东西扔向对手。",
+      "icon": "images/svg/throw_object.svg"
     },
     {
       "id": "fighting_stance",
@@ -162,7 +177,8 @@
       "cost": 1,
       "type": "passive",
       "requires": [],
-      "desc": "双拳护住下颌、前后脚错开站稳，第一次像个会打架的人。是所有武术训练的起点。"
+      "desc": "双拳护住下颌、前后脚错开站稳，第一次像个会打架的人。是所有武术训练的起点。",
+      "icon": "images/svg/fighting_stance.svg"
     },
     {
       "id": "jab",
@@ -175,7 +191,8 @@
         "fighting_stance",
         "wild_swing"
       ],
-      "desc": "前手快速直线出拳，伤害不高但起手极快，用来试探和打断。"
+      "desc": "前手快速直线出拳，伤害不高但起手极快，用来试探和打断。",
+      "icon": "images/svg/jab.svg"
     },
     {
       "id": "straight_punch",
@@ -187,7 +204,8 @@
       "requires": [
         "jab"
       ],
-      "desc": "后手转腰送肩打出的直拳，比刺拳慢半拍，力量完整。"
+      "desc": "后手转腰送肩打出的直拳，比刺拳慢半拍，力量完整。",
+      "icon": "images/svg/straight_punch.svg"
     },
     {
       "id": "elbow_strike",
@@ -200,7 +218,8 @@
         "headbutt",
         "fighting_stance"
       ],
-      "desc": "近身时用肘尖横扫，距离极短但很难防。"
+      "desc": "近身时用肘尖横扫，距离极短但很难防。",
+      "icon": "images/svg/elbow_strike.svg"
     },
     {
       "id": "front_kick",
@@ -213,7 +232,8 @@
         "crude_kick",
         "fighting_stance"
       ],
-      "desc": "提膝后用脚跟向前蹬出，可以把对手推开。"
+      "desc": "提膝后用脚跟向前蹬出，可以把对手推开。",
+      "icon": "images/svg/front_kick.svg"
     },
     {
       "id": "roundhouse_kick",
@@ -225,7 +245,8 @@
       "requires": [
         "front_kick"
       ],
-      "desc": "转胯横扫的腿法，像鞭子一样抽向对手侧面。"
+      "desc": "转胯横扫的腿法，像鞭子一样抽向对手侧面。",
+      "icon": "images/svg/roundhouse_kick.svg"
     },
     {
       "id": "low_sweep",
@@ -238,7 +259,8 @@
         "front_kick",
         "flinch_dodge"
       ],
-      "desc": "压低重心贴地横扫，专攻下盘，命中可使对手倒地。"
+      "desc": "压低重心贴地横扫，专攻下盘，命中可使对手倒地。",
+      "icon": "images/svg/low_sweep.svg"
     },
     {
       "id": "parry",
@@ -251,7 +273,8 @@
         "cover_up",
         "fighting_stance"
       ],
-      "desc": "不再只是抱头，而是用前臂把来拳拨开，格挡后留出反击空档。"
+      "desc": "不再只是抱头，而是用前臂把来拳拨开，格挡后留出反击空档。",
+      "icon": "images/svg/parry.svg"
     },
     {
       "id": "sidestep",
@@ -264,7 +287,8 @@
         "flinch_dodge",
         "fighting_stance"
       ],
-      "desc": "有控制的侧向移步，躲开攻击同时保持架势。"
+      "desc": "有控制的侧向移步，躲开攻击同时保持架势。",
+      "icon": "images/svg/sidestep.svg"
     },
     {
       "id": "clinch",
@@ -276,7 +300,8 @@
       "requires": [
         "shove"
       ],
-      "desc": "贴身抱住对手的手臂或脖颈，限制其出招。"
+      "desc": "贴身抱住对手的手臂或脖颈，限制其出招。",
+      "icon": "images/svg/clinch.svg"
     },
     {
       "id": "shoulder_throw",
@@ -288,7 +313,8 @@
       "requires": [
         "clinch"
       ],
-      "desc": "借对手前冲的力量，转身将其从肩上摔出。"
+      "desc": "借对手前冲的力量，转身将其从肩上摔出。",
+      "icon": "images/svg/shoulder_throw.svg"
     },
     {
       "id": "breath_control",
@@ -300,7 +326,8 @@
       "requires": [
         "fighting_stance"
       ],
-      "desc": "学会在战斗中控制呼吸，体力恢复更快。各传承流派都以此为根基。"
+      "desc": "学会在战斗中控制呼吸，体力恢复更快。各传承流派都以此为根基。",
+      "icon": "images/svg/breath_control.svg"
     },
     {
       "id": "charged_punch",
@@ -537,6 +564,143 @@
       "desc": "一手勾、一手推掌，长距离的推击。"
     },
     {
+      "id": "smoke_vanish",
+      "name_zh": "烟遁",
+      "name_en": "Smoke Vanish",
+      "tier": "T2",
+      "lineage": "shadow",
+      "type": "active",
+      "requires": [
+        "sidestep",
+        "throw_object"
+      ],
+      "desc": "摔下烟雾弹，在浓烟里消失，下一回合从对手的盲区出现。"
+    },
+    {
+      "id": "backstab",
+      "name_zh": "背刺",
+      "name_en": "Backstab",
+      "tier": "T2",
+      "lineage": "shadow",
+      "type": "active",
+      "requires": [
+        "elbow_strike",
+        "sidestep"
+      ],
+      "desc": "绕到对手身后发动突袭。对手正在出招的收招帧里命中，伤害翻倍。"
+    },
+    {
+      "id": "shadow_bind",
+      "name_zh": "影缚",
+      "name_en": "Shadow Bind",
+      "tier": "T2",
+      "lineage": "shadow",
+      "type": "active",
+      "requires": [
+        "clinch",
+        "breath_control"
+      ],
+      "desc": "让自己的影子缠住对手的脚，使其下一回合起手变慢。",
+      "energy_cost": 20
+    },
+    {
+      "id": "silent_takedown",
+      "name_zh": "无声制服",
+      "name_en": "Silent Takedown",
+      "tier": "T2",
+      "lineage": "shadow",
+      "type": "active",
+      "requires": [
+        "shoulder_throw",
+        "clinch"
+      ],
+      "desc": "从背后锁喉压倒对手，全程不发出一点声音。"
+    },
+    {
+      "id": "shadow_clone",
+      "name_zh": "影分身",
+      "name_en": "Shadow Clone",
+      "tier": "T2",
+      "lineage": "shadow",
+      "type": "active",
+      "requires": [
+        "sidestep",
+        "breath_control"
+      ],
+      "desc": "分出数个影子同时出招，对手无法分辨哪一个是真身。",
+      "energy_cost": 35,
+      "status": "coming_soon"
+    },
+    {
+      "id": "rocket_punch",
+      "name_zh": "火箭飞拳",
+      "name_en": "Rocket Punch",
+      "tier": "T2",
+      "lineage": "tech",
+      "type": "active",
+      "requires": [
+        "straight_punch"
+      ],
+      "desc": "装甲拳套点燃推进器脱手飞出，远距离重击后自动飞回。",
+      "energy_cost": 25
+    },
+    {
+      "id": "repulsor_blast",
+      "name_zh": "掌心冲击炮",
+      "name_en": "Repulsor Blast",
+      "tier": "T2",
+      "lineage": "tech",
+      "type": "active",
+      "requires": [
+        "jab",
+        "parry"
+      ],
+      "desc": "掌心的冲击炮近距离发射，把对手连同防御一起推开。",
+      "energy_cost": 20
+    },
+    {
+      "id": "armor_brace",
+      "name_zh": "装甲硬挡",
+      "name_en": "Armor Brace",
+      "tier": "T2",
+      "lineage": "tech",
+      "type": "active",
+      "requires": [
+        "parry",
+        "cover_up"
+      ],
+      "desc": "装甲锁死关节硬接攻击，格挡帧更长，但期间无法移动。",
+      "energy_cost": 10
+    },
+    {
+      "id": "thruster_kick",
+      "name_zh": "推进飞踢",
+      "name_en": "Thruster Kick",
+      "tier": "T2",
+      "lineage": "tech",
+      "type": "active",
+      "requires": [
+        "front_kick",
+        "roundhouse_kick"
+      ],
+      "desc": "脚跟推进器点火加速的飞踢，起手短，冲击距离长。",
+      "energy_cost": 15
+    },
+    {
+      "id": "overdrive",
+      "name_zh": "超载模式",
+      "name_en": "Overdrive",
+      "tier": "T2",
+      "lineage": "tech",
+      "type": "active",
+      "requires": [
+        "breath_control"
+      ],
+      "desc": "解除装甲输出限制，所有科技招式起手缩短，能量持续流失。",
+      "energy_cost": "持续",
+      "status": "coming_soon"
+    },
+    {
       "id": "super_strength",
       "name_zh": "超级力量",
       "name_en": "Super Strength",
@@ -584,7 +748,8 @@
       "type": "active",
       "energy_cost": "持续",
       "enhances": [
-        "aerial_slam"
+        "aerial_slam",
+        "thruster_kick"
       ],
       "desc": "无需任何装置即可自由飞行。",
       "requires": []

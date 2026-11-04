@@ -8,6 +8,8 @@
   var ZOOM_MIN = 0.5, ZOOM_MAX = 1.5, ZOOM_STEP = 0.1;
 
   var data = null, byId = {}, nodeEls = {}, edges = [], enhancedBy = {};
+  var groups = {};           // T2 流派 key -> 分组元素
+  var STORE_KEY = "supershero.skilltree.collapsed";
   var canvas, svg, viewport, panel, panelEmpty, panelDetail;
   var pinnedId = null, previewId = null, shownId = null;
   var zoom = 1;
@@ -38,6 +40,7 @@
       if (seen[s.id]) console.warn("[skill-tree] 重复的技能 id：" + s.id);
       seen[s.id] = true;
       if (["state", "T0", "T1", "T2", "P"].indexOf(s.tier) < 0) console.warn("[skill-tree] " + s.id + " 的 tier 未知：" + s.tier);
+      if (s.icon != null && typeof s.icon !== "string") console.warn("[skill-tree] " + s.id + " 的 icon 应为图片路径字符串");
       if (s.type && !TYPE_LABEL[s.type]) console.warn("[skill-tree] " + s.id + " 的 type 未知：" + s.type);
     });
     data.skills.forEach(function (s) {
@@ -69,8 +72,22 @@
     var label = s.name_zh + "（" + s.name_en + "）";
     if (s.status === "coming_soon") { n.classList.add("coming-soon"); label += "，即将开放"; }
     n.setAttribute("aria-label", label);
-    n.appendChild(el("span", "node-zh", s.name_zh));
-    n.appendChild(el("span", "node-en", s.name_en));
+    var text = el("span", "node-text");
+    text.appendChild(el("span", "node-zh", s.name_zh));
+    text.appendChild(el("span", "node-en", s.name_en));
+    if (s.icon) {
+      n.classList.add("has-icon");
+      var ic = new Image();
+      ic.className = "node-icon";
+      ic.alt = "";
+      ic.width = 40;
+      ic.height = 40;
+      ic.decoding = "async";
+      ic.onerror = function () { if (ic.parentNode) ic.parentNode.removeChild(ic); n.classList.remove("has-icon"); };
+      ic.src = s.icon;
+      n.appendChild(ic);
+    }
+    n.appendChild(text);
     var badges = el("span", "node-badges");
     if (s.energy_cost != null && s.energy_cost !== "") {
       var ec = String(s.energy_cost);
@@ -92,12 +109,30 @@
     return n;
   }
 
-  function groupBox(cls, key, zh, en) {
+  function groupBox(cls, key, zh, en, count, collapsible) {
     var g = el("div", "group " + cls + "-" + key);
+    g.dataset.group = key;
     var h = el("div", "group-head");
+    if (collapsible) {
+      h.classList.add("group-toggle");
+      h.tabIndex = 0;
+      h.setAttribute("role", "button");
+      h.dataset.toggle = key;
+      h.setAttribute("aria-label", zh + "，" + count + " 个技能，点击折叠或展开");
+      var chev = el("span", "chev");
+      chev.setAttribute("aria-hidden", "true");
+      h.appendChild(chev);
+    }
     h.appendChild(el("span", "group-zh", zh));
     h.appendChild(el("span", "group-en", en));
+    if (collapsible) h.appendChild(el("span", "group-count", count + " 个技能"));
     g.appendChild(h);
+    var items = el("div", "group-items");
+    items.id = "group-items-" + key;
+    if (collapsible) h.setAttribute("aria-controls", items.id);
+    g.appendChild(items);
+    g._items = items;
+    g._head = h;
     return g;
   }
 
@@ -110,9 +145,11 @@
       var items = list.filter(function (s) { return s[key] === k; });
       if (!items.length) return;
       var meta = (metaMap || {})[k] || { name_zh: String(k), name_en: "" };
-      var g = groupBox(cls, k, meta.name_zh, meta.name_en);
-      items.forEach(function (s) { g.appendChild(makeNode(s)); });
+      var collapsible = tier === "T2";
+      var g = groupBox(cls, k, meta.name_zh, meta.name_en, items.length, collapsible);
+      items.forEach(function (s) { g._items.appendChild(makeNode(s)); });
       col.appendChild(g);
+      if (collapsible) groups[k] = g;
     });
   }
 
@@ -196,10 +233,26 @@
     return { l: l, r: l + w, t: t, b: t + h, cy: t + h / 2 };
   }
 
+  // 节点所在分组被折叠时，连线改连到分组标题
+  function groupOf(id) {
+    var s = byId[id];
+    return s && s.tier === "T2" ? groups[s.lineage] : null;
+  }
+  function isHidden(id) {
+    var g = groupOf(id);
+    return !!(g && g.classList.contains("collapsed"));
+  }
+  function visibleEl(id) {
+    var g = groupOf(id);
+    return g && g.classList.contains("collapsed") ? g._head : nodeEls[id];
+  }
+
   function drawLinks() {
     var m = canvasMetrics();
     edges.forEach(function (e) {
-      var a = rectIn(nodeEls[e.from], m), b = rectIn(nodeEls[e.to], m);
+      var fromEl = visibleEl(e.from), toEl = visibleEl(e.to);
+      var a = rectIn(fromEl, m), b = rectIn(toEl, m);
+      if (e.el) e.el.classList.toggle("to-group", fromEl !== nodeEls[e.from] || toEl !== nodeEls[e.to]);
       var d, x1, y1, x2, y2, k;
       if (e.kind === "enh") {
         x1 = a.l; y1 = a.cy; x2 = b.r + 2; y2 = b.cy;
@@ -266,6 +319,11 @@
       });
       edges.forEach(function (e) { if (e.el) e.el.classList.toggle("hl", onEdge.indexOf(e) >= 0); });
     }
+    Object.keys(groups).forEach(function (k) {
+      var g = groups[k], hit = false;
+      if (id) Array.prototype.forEach.call(g._items.children, function (n) { if (n.classList.contains("hl")) hit = true; });
+      g._head.classList.toggle("hl", hit);
+    });
     Object.keys(nodeEls).forEach(function (k) {
       var sel = k === pinnedId;
       nodeEls[k].classList.toggle("selected", sel);
@@ -336,6 +394,17 @@
       fig.appendChild(img);
       panelDetail.appendChild(fig);
     }
+    else if (s.icon) {
+      var fig2 = el("div", "tt-icon tt-icon-" + s.tier);
+      var ic = new Image();
+      ic.alt = s.name_zh + " 示意图";
+      ic.width = 180;
+      ic.height = 180;
+      ic.onerror = function () { if (fig2.parentNode) fig2.parentNode.removeChild(fig2); };
+      ic.src = s.icon;
+      fig2.appendChild(ic);
+      panelDetail.appendChild(fig2);
+    }
     panelDetail.appendChild(head);
 
     var body = el("div", "tt-body");
@@ -385,13 +454,74 @@
   }
   function preview(id) { if (previewId !== id) { previewId = id; update(); } }
   function endPreview() { if (previewId) { previewId = null; update(); } }
-  function pin(id) { pinnedId = id; previewId = null; update(); }
+  function pin(id) {
+    pinnedId = id; previewId = null; update();
+    // 详情面板（尤其是手机底部抽屉）展开后视口会变小，确保选中的卡片仍然可见
+    requestAnimationFrame(function () {
+      var n = nodeEls[id];
+      if (n && !isHidden(id)) n.scrollIntoView({ block: "nearest", inline: "nearest" });
+    });
+  }
   function unpin() { pinnedId = null; previewId = null; update(); }
 
   function reveal(id, smooth) {
     var n = nodeEls[id];
     if (!n) return;
-    n.scrollIntoView({ block: "center", inline: "center", behavior: smooth ? "smooth" : "auto" });
+    var g = groupOf(id);
+    var wait = g && g.classList.contains("collapsed");
+    if (wait) setCollapsed(byId[id].lineage, false);
+    setTimeout(function () {
+      n.scrollIntoView({ block: "center", inline: "center", behavior: smooth ? "smooth" : "auto" });
+    }, wait ? ANIM_MS + 30 : 0);
+  }
+
+  /* ---------- T2 流派折叠 ---------- */
+  var ANIM_MS = 260;
+  function loadCollapsed() {
+    try { return JSON.parse(localStorage.getItem(STORE_KEY) || "[]") || []; } catch (e) { return []; }
+  }
+  function saveCollapsed() {
+    var list = Object.keys(groups).filter(function (k) { return groups[k].classList.contains("collapsed"); });
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(list)); } catch (e) { /* 隐私模式等情况下忽略 */ }
+  }
+  function followLinks(ms) {
+    var end = performance.now() + ms;
+    (function tick() {
+      drawLinks();
+      if (performance.now() < end) requestAnimationFrame(tick);
+    })();
+  }
+  function setCollapsed(key, collapsed, instant) {
+    var g = groups[key];
+    if (!g || g.classList.contains("collapsed") === collapsed) return;
+    var items = g._items;
+    var reduce = instant || (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+    if (collapsed && shownId && groupOf(shownId) === g && pinnedId === shownId) { pinnedId = null; previewId = null; }
+    g.classList.toggle("collapsed", collapsed);
+    g._head.setAttribute("aria-expanded", collapsed ? "false" : "true");
+    if (collapsed) items.setAttribute("inert", ""); else items.removeAttribute("inert");
+    items.setAttribute("aria-hidden", collapsed ? "true" : "false");
+    if (reduce) {
+      items.style.height = collapsed ? "0px" : "";
+      drawLinks();
+    } else {
+      var full = items.scrollHeight;
+      items.style.height = (collapsed ? full : 0) + "px";
+      items.offsetHeight; // 强制回流，让过渡从起始高度开始
+      items.style.height = (collapsed ? 0 : full) + "px";
+      clearTimeout(items._t);
+      items._t = setTimeout(function () {
+        if (!g.classList.contains("collapsed")) items.style.height = "";
+        drawLinks();
+      }, ANIM_MS + 20);
+      followLinks(ANIM_MS + 40);
+    }
+    saveCollapsed();
+    if (!shownId || !collapsed) return;
+    update();
+  }
+  function setAll(collapsed) {
+    Object.keys(groups).forEach(function (k) { setCollapsed(k, collapsed); });
   }
 
   /* ---------- 缩放 ---------- */
@@ -415,7 +545,7 @@
     canvas.addEventListener("pointerover", function (ev) {
       if (ev.pointerType !== "mouse") return;
       var n = nodeFrom(ev.target);
-      if (n) preview(n.dataset.id);
+      if (n && !isHidden(n.dataset.id)) preview(n.dataset.id);
     });
     canvas.addEventListener("pointerout", function (ev) {
       if (ev.pointerType !== "mouse") return;
@@ -451,6 +581,10 @@
       var j = ev.target.closest && ev.target.closest("[data-jump]");
       if (j) { var id = j.dataset.jump; pin(id); reveal(id, true); nodeEls[id].focus({ preventScroll: true }); return; }
       if (ev.target.closest && ev.target.closest("[data-close]")) { unpin(); return; }
+      var tg = ev.target.closest && ev.target.closest("[data-toggle]");
+      if (tg) { var gk = tg.dataset.toggle; setCollapsed(gk, !groups[gk].classList.contains("collapsed")); return; }
+      var all = ev.target.closest && ev.target.closest("[data-all]");
+      if (all) { setAll(all.dataset.all === "collapse"); return; }
       var n = nodeFrom(ev.target);
       if (n) { pin(n.dataset.id); return; }
       if (ev.target.closest && ev.target.closest(".panel, .zoom, .topbar")) return;
@@ -472,6 +606,10 @@
       if (ev.key === "Escape") {
         unpin();
         if (n) n.blur();
+      } else if ((ev.key === "Enter" || ev.key === " ") && ev.target.dataset && ev.target.dataset.toggle) {
+        ev.preventDefault();
+        var k2 = ev.target.dataset.toggle;
+        setCollapsed(k2, !groups[k2].classList.contains("collapsed"));
       } else if ((ev.key === "Enter" || ev.key === " ") && n) {
         ev.preventDefault();
         pin(n.dataset.id);
@@ -522,6 +660,11 @@
         data.skills.forEach(function (s) { if (s && s.id) byId[s.id] = s; });
         validate();
         render();
+        var saved = loadCollapsed();
+        Object.keys(groups).forEach(function (k) {
+          groups[k]._head.setAttribute("aria-expanded", "true");
+          if (saved.indexOf(k) >= 0) setCollapsed(k, true, true);
+        });
         buildDefs();
         bind();
         drawLinks();
