@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>超级英雄·技能树 | SUPERSHERO SKILL TREE</title>
+<meta name="description" content="supershero 角色技能树：人类本能、武术训练、传承与超能力。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22%3E%3Cpath d=%22M9 0L2 9h5l-1 7 7-9H8z%22 fill=%22%23ffd60a%22/%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="masthead">
+  <div class="banner">
+    <span class="banner-kicker">SUPERSHERO</span>
+    <h1>超级英雄<span class="dot">·</span>技能树</h1>
+    <p class="banner-en">SKILL TREE</p>
+  </div>
+  <div class="pow" aria-hidden="true"><span>POW!</span></div>
+  <p class="masthead-sub">从街头本能到超凡之力。悬停或点击技能卡查看详情和前置路径。</p>
+</header>
+
+<section class="legend" aria-label="图例">
+  <div class="legend-group">
+    <span class="legend-title">层级</span>
+    <span class="chip chip-t0">T0 人类本能</span>
+    <span class="chip chip-t1">T1 武术训练</span>
+  </div>
+  <div class="legend-group" id="legend-lineages">
+    <span class="legend-title">传承流派</span>
+  </div>
+  <div class="legend-group">
+    <span class="legend-title">超能力</span>
+    <span class="chip chip-p">P 超能力</span>
+  </div>
+  <div class="legend-group">
+    <span class="legend-title">类型</span>
+    <span class="chip chip-type type-active">主动</span>
+    <span class="chip chip-type type-passive">被动</span>
+    <span class="chip chip-type type-ultimate">终极</span>
+  </div>
+  <div class="legend-group">
+    <span class="legend-title">连线</span>
+    <span class="line-sample line-req" aria-hidden="true"></span><span class="legend-text">前置</span>
+    <span class="line-sample line-enh" aria-hidden="true"></span><span class="legend-text">超能力强化</span>
+  </div>
+  <p class="legend-note"><span class="bolt" aria-hidden="true">⚡</span>凡人无法使用消耗能量的技能</p>
+</section>
+
+<main>
+  <div class="tree-scroll" id="tree-scroll">
+    <div class="tree" id="tree">
+      <svg class="links" id="links" aria-hidden="true"></svg>
+      <div class="col" data-col="T0">
+        <h2 class="col-head"><span class="col-tag">T0</span>人类本能<small>HUMAN INSTINCT</small></h2>
+        <div class="col-body" id="col-T0"></div>
+      </div>
+      <div class="col" data-col="T1">
+        <h2 class="col-head"><span class="col-tag">T1</span>武术训练<small>MARTIAL TRAINING</small></h2>
+        <div class="col-body" id="col-T1"></div>
+      </div>
+      <div class="col" data-col="T2">
+        <h2 class="col-head"><span class="col-tag">T2</span>传承<small>LINEAGE</small></h2>
+        <div class="col-body" id="col-T2"></div>
+      </div>
+      <div class="col" data-col="P">
+        <h2 class="col-head"><span class="col-tag">P</span>超能力<small>SUPERPOWERS</small></h2>
+        <div class="col-body" id="col-P"></div>
+      </div>
+    </div>
+  </div>
+
+  <section class="states">
+    <h2 class="section-head">通用状态<small>COMMON STATES</small></h2>
+    <p class="states-note">所有角色共用的动作状态，不是技能，无需学习。</p>
+    <div class="states-grid" id="states"></div>
+  </section>
+  <p class="load-error" id="load-error" hidden></p>
+</main>
+
+<div class="tooltip" id="tooltip" role="tooltip" hidden></div>
+
+<footer class="foot">supershero · 技能数据来自 <code>skills.json</code> · <a href="../">返回博客</a></footer>
+<script src="app.js"></script>
+</body>
+</html>
