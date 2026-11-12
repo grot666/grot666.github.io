@@ -7,6 +7,7 @@ layout: default
 <ul>
   <li><a href="/ashen-crown/">ASHEN CROWN · 灰烬王冠</a> <small>原创暗黑奇幻 Hex 战棋 · 兽人 vs 精灵 · 战术 AI / 本地双人</small></li>
   <li><a href="/chess-tactics-trainer/">Chess Tactics Trainer · 国际象棋战术训练</a> <small>国际象棋战术训练 Web 应用</small></li>
+  <li><a href="/guitar-practice/">Guitar Practice · 吉他练习</a> <small>调音器 + 音准练习 + 节奏练习（节拍器、起音检测、延迟校准），纯前端，数据只存本机</small></li>
   <li><a href="/middle-earth-atlas/">Middle-earth Interactive Atlas</a> <small>Interactive Middle-earth atlas with geography, history and politics across the Ages</small></li>
   <li><a href="/next-shore/">Next Shore · 彼岸</a> <small>A calm self-assessment for early-career professionals curious about working abroad</small></li>
   <li><a href="/Petit/">Petit · 小玩意儿</a> <small>Small fun things · 生成艺术画廊 + 小游戏合集（2048、贪吃蛇、扫雷、Dual N-Back 等）</small></li>
