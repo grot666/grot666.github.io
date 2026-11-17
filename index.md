@@ -5,7 +5,7 @@ layout: default
 <h2>Projects</h2>
 
 <ul>
-  <li><a href="/dnd-companion/">旅人手札 · D&amp;D 5E Companion</a> <small>2014 SRD 5.1 · 中文角色创建与管理、法术典籍、装备行囊 · 数据仅存本机</small></li>
+  <li><a href="/dnd-companion/">D&amp;D 探索手册 · 5E Codex</a> <small>中文 D&amp;D 快速入门 · 职业、种族、背景、法术与世界导览 · 2014 SRD 5.1，附本地角色工具</small></li>
   <li><a href="/ashen-crown/">ASHEN CROWN · 灰烬王冠</a> <small>原创暗黑奇幻 Hex 战棋 · 兽人 vs 精灵 · 战术 AI / 本地双人</small></li>
   <li><a href="/chess-tactics-trainer/">Chess Tactics Trainer · 国际象棋战术训练</a> <small>国际象棋战术训练 Web 应用</small></li>
   <li><a href="/guitar-practice/">Guitar Practice · 吉他练习</a> <small>调音器 + 音准练习 + 节奏练习（节拍器、起音检测、延迟校准），纯前端，数据只存本机</small></li>
