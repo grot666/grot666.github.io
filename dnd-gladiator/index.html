@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>dnd角斗士 · 灰砂竞技场</title><link rel="stylesheet" href="arena.css">
-<main><header><a href="/">← 博客</a><span>灰砂城邦　/　竞技场</span></header><h1>dnd角斗士</h1>
-<section id="forge"><h2>登记角斗士</h2><div class="forge"><canvas id="portrait" width="96" height="96" aria-label="角斗士像素肖像"></canvas><div><label>称号 <input id="heroName" maxlength="16"></label><label>职业 <select id="job"></select></label><button id="roll">重新生成人物</button><button id="png">下载肖像 PNG</button></div></div><p id="summary"></p><button class="gold" id="start">保存角色并入场 →</button><small id="saveMsg"></small></section>
-<section id="arena" hidden><small id="round"></small><h2 id="title"></h2><div id="vitals"></div><div id="track"></div><p id="hint"></p><div id="actions"></div><details open><summary>战斗记录</summary><ol id="log" aria-live="polite"></ol></details></section></main><script src="rules.js"></script><script src="arena.js"></script></html>
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>灰砂角斗馆 · DND 角斗士经理</title><link rel="stylesheet" href="arena.css?v=2"></head>
+<body><main><header><a href="/">← 博客</a><span>灰砂城邦职业联赛</span></header><div class="mast"><div><small>GREYSAND FIGHT CLUB</small><h1>灰砂角斗馆</h1></div><div id="cash"></div></div>
+<nav id="nav"></nav><section id="view"></section><p id="notice" role="status"></p></main>
+<script src="rules.js?v=2"></script><script src="models.js?v=2"></script><script src="arena.js?v=2"></script></body></html>

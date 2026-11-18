@@ -1,63 +1,104 @@
 const $=id=>document.getElementById(id);
-const key='grey-sand.hero.v1';
-let hero, player, enemy, stage, turn, moved, cooldown, rooted, ended;
-const job=()=>JOBS[hero.job];
-for(const [value,data] of Object.entries(JOBS)) $('job').add(new Option(data.name,value));
-function generate(){
- const names=['灰雀','铁橡','赤鸦','白棘','夜砾','青隼'];
- return {name:names[dice(names.length)-1],job:$('job').value,seed:Math.floor(Math.random()*0xffffffff)};
+const SAVE='greysand.manager.v2';
+let state;
+try{state=JSON.parse(localStorage.getItem(SAVE))}catch{}
+if(!state||state.version!==2){
+ state=fresh();
+ try{
+ const old=JSON.parse(localStorage.getItem('grey-sand.hero.v1'));
+ const job={fighter:'guard',ranger:'bow',mage:'mage'}[old?.job];
+ if(job&&Number.isInteger(old.seed))state.team[0]=fighter(String(old.name).slice(0,16),job,old.seed);
+ }catch{}
 }
-function draw(){
- const ctx=$('portrait').getContext('2d');
- let state=hero.seed>>>0;
- function pick(list){state=(Math.imul(state,1664525)+1013904223)>>>0;return list[Math.floor(state/4294967296*list.length)]}
- function box(x,y,w,h,c){ctx.fillStyle=c;ctx.fillRect(x*4,y*4,w*4,h*4)}
- const skin=pick(['#c58563','#945f49','#dfa37e','#ab745c']), hair=pick(['#39302b','#a86342','#ded1aa','#473c42']);
- box(0,0,24,24,pick(['#414c50','#554449','#454e42']));box(3,21,18,3,'#181e22');box(5,19,14,5,job().color);
- box(10,16,4,4,skin);box(7,6,10,10,skin);box(8,15,8,2,skin);box(6,5,12,3,hair);box(6,8,pick([1,2,3]),5,hair);
- box(9,10,2,1,'#372e2c');box(14,10,2,1,'#372e2c');box(11,14,3,1,'#754e42');
- if(hero.job==='fighter'){box(6,4,12,4,'#939d99');box(5,7,14,1,'#e3ce9d');box(11,2,2,4,'#b65841')}
- if(hero.job==='ranger'){box(8,3,8,3,job().color);box(5,6,14,2,'#58764c');box(16,3,2,4,'#ddac69')}
- if(hero.job==='mage'){box(9,3,7,3,job().color);box(12,1,3,3,job().color);box(4,6,15,2,'#675583')}
- box(7,20,3,4,'#513f32');box(9,20,2,2,'#e2c382');
- $('summary').textContent=job().name+' · 生命 '+job().hp+' · 护甲 '+job().ac+' · 普攻射程 '+job().range+' 格。'+job().skill+'：'+EFFECTS[job().effect]+'。';
-}
-function showHero(){ $('job').value=hero.job;$('heroName').value=hero.name;draw() }
-hero=generate();
-try{const h=JSON.parse(localStorage.getItem(key));if(h&&Object.hasOwn(JOBS,h.job)&&typeof h.name==='string'&&Number.isInteger(h.seed))hero=h}catch{}
-showHero();
-$('roll').onclick=()=>{hero=generate();showHero()};
-$('job').onchange=()=>{hero.job=$('job').value;draw()};
-$('png').onclick=()=>{const a=document.createElement('a');a.download=($('heroName').value.trim()||'角斗士')+'.png';a.href=$('portrait').toDataURL();a.click()};
-$('start').onclick=()=>{hero.name=$('heroName').value.trim()||'无名客';let saved=true;try{localStorage.setItem(key,JSON.stringify(hero))}catch{saved=false}
- $('forge').hidden=true;$('arena').hidden=false;bout(0);if(!saved)note('浏览器未允许保存角色。')};
-function note(s){let li=document.createElement('li');li.textContent=s;$('log').prepend(li)}
-function bout(n){stage=n;turn=1;moved=false;ended=false;cooldown=0;rooted=false;player={...job(),pos:1};enemy={...FOES[n],pos:5};$('log').replaceChildren();note('号角响起。你先行动。');render()}
-const distance=()=>Math.abs(player.pos-enemy.pos);
-function enemyTurn(){
- if(!rooted&&distance()>enemy.range)enemy.pos+=Math.sign(player.pos-enemy.pos);
- rooted=false;
- if(distance()<=enemy.range)note(enemy.name+'出手：'+strike(enemy,player).text);else note(enemy.name+'逼近，仍在射程外。');
- turn++;moved=false;cooldown=Math.max(0,cooldown-1);render()
-}
-function attack(skill){
- const result=strike(player,enemy,skill&&job().effect==='pierce'?8:4);
- note((skill?job().skill:'普攻')+'：'+result.text);
- if(skill){cooldown=3;if(result.hit&&job().effect==='push')enemy.pos=Math.max(0,Math.min(6,enemy.pos+2*Math.sign(enemy.pos-player.pos)));
- if(result.hit&&job().effect==='root')rooted=true}
- if(enemy.hp)enemyTurn();else render()
-}
-function button(text,fn,disabled=false){const b=document.createElement('button');b.textContent=text;b.disabled=disabled;b.onclick=fn;$('actions').append(b)}
+let page=state.fight?'比赛':'馆务', selected=state.team[0].id, angle=0, timer=0, animation=0, busy=false;
+const tabs=['馆务','角斗士','签约市场','装备与设施','赛事'];
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function save(){try{localStorage.setItem(SAVE,JSON.stringify(state))}catch{$('notice').textContent='当前浏览器无法保存，请在关闭前完成本场。'}}
+const active=()=>state.team.find(f=>f.id===selected)||state.team[0];
+const ready=f=>f.ready<=state.week;
+const status=f=>ready(f)?'可出赛':'第 '+f.ready+' 周复出';
+function btn(label,fn,off=false){const b=document.createElement('button');b.textContent=label;b.disabled=off;b.onclick=fn;return b}
+function add(id,label,fn,off=false){$(id).append(btn(label,fn,off))}
+function commit(msg){render();$('notice').textContent=msg||'';save()}
+function go(next){page=next;render()}
+function card(title,body,id){return '<article class="card"><h3>'+esc(title)+'</h3>'+body+'<div id="'+id+'"></div></article>'}
+function model(id,f){paint($(id),[{f,pos:3}],false,angle)}
+function pic(id){return '<canvas id="'+id+'" width="380" height="225" aria-label="三维选手形象"></canvas>'}
+function portrait(id,f){const a=document.createElement('a');a.download=f.name+'.png';a.href=$(id).toDataURL('image/png');a.click()}
 function render(){
- ended=!player.hp||!enemy.hp;
- $('round').textContent='第 '+(stage+1)+' / '+FOES.length+' 场　·　第 '+turn+' 回合';
- $('title').textContent=ended?(player.hp?(stage===FOES.length-1?'夺得灰砂桂冠':'赢下此场'):'落败于沙场'):enemy.name;
- $('vitals').replaceChildren();for(const [name,h] of [[hero.name,player],[enemy.name,enemy]]){let s=document.createElement('span');s.textContent=name+' · HP '+h.hp+' / '+(h===player?job().hp:FOES[stage].hp);$('vitals').append(s)}
- $('track').replaceChildren();for(let i=0;i<7;i++){const c=document.createElement('div');c.className='cell';if(i===player.pos){let img=new Image();img.src=$('portrait').toDataURL();img.alt='我方';c.append(img)}if(i===enemy.pos){const b=document.createElement('b');b.textContent='敌';c.append(b)}const s=document.createElement('small');s.textContent=i+1;c.append(s);$('track').append(c)}
- $('actions').replaceChildren();$('hint').textContent=ended?'':(moved?'本回合已移动':'每回合可先移动一格')+'。攻击或待机会结束回合。相距 '+distance()+' 格。';
- if(ended){if(player.hp&&stage<FOES.length-1)button('恢复生命，进入下一场',()=>bout(stage+1));else button('重新挑战',()=>bout(0));button('返回角色登记',()=>{$('arena').hidden=true;$('forge').hidden=false;showHero()});return}
- for(const delta of [-1,1]){let dest=player.pos+delta;button(delta<0?'← 左移':'右移 →',()=>{player.pos=dest;moved=true;render()},moved||dest<0||dest>6||dest===enemy.pos)}
- button('攻击 · '+job().range+'格',()=>attack(false),distance()>job().range);
- button(job().skill+(cooldown?' · 冷却 '+cooldown:' · '+job().reach+'格'),()=>attack(true),cooldown>0||distance()>job().reach);
- button('待机',enemyTurn)
+ clearTimeout(timer);cancelAnimationFrame(animation);
+ $('notice').textContent='';$('nav').replaceChildren();$('cash').innerHTML='第 '+state.week+' 周<br><strong>'+state.gold+' 金</strong>';
+ for(const t of tabs){const b=btn(t,()=>go(t),!!state.fight);if(t===page)b.className='active';$('nav').append(b)}
+ if(state.fight)return fightView();
+ ({'馆务':office,'角斗士':roster,'签约市场':market,'装备与设施':shop,'赛事':events})[page]();
 }
+function office(){
+ const wages=state.team.reduce((n,f)=>n+f.wage,0),cost=upkeep(state);
+ $('view').innerHTML='<div class="line"><h2>本周馆务</h2><small>'+ (state.crown?'已夺联赛冠军':'联赛目标 · 赢得冠军挑战赛')+'</small></div><canvas class="scene" id="hall" width="960" height="300"></canvas><div class="grid">'+card('比赛日','<p>'+state.team.filter(ready).length+' 人可出赛 · 已接 '+state.taken.length+' / 3 场</p>','book')+card('周末账单','<p>选手底薪 '+wages+' 金 + 场馆 '+(cost-wages)+' 金</p><strong>合计 '+cost+' 金</strong>','week')+'</div><h2>角斗馆纪事</h2><p>'+state.history.slice(0,8).map(esc).join('<br>')+'</p>';
+ if(!state.history.length)$('view').lastElementChild.textContent='开馆日。两名选手已登记，可以安排首场比赛。';
+ paint($('hall'),state.team.slice(0,5).map((f,i)=>({f,pos:1+i,enemy:i%2})));add('book','查看比赛合同',()=>go('赛事'));
+ add('week','支付周费，进入下周',()=>{state.gold-=cost;state.history.unshift('第 '+state.week+' 周结账 · 支出 '+cost+' 金');state.week++;state.taken=[];state.market=[recruit(),recruit(),recruit()];commit('新一周的合同和候选选手已到。')});
+}
+function roster(){
+ const f=active(),c=CLASSES[f.job];selected=f.id;
+ $('view').innerHTML='<h2>角斗士名册</h2><div class="line"><select aria-label="选择角斗士" id="pick"></select></div><div class="grid"><div class="card">'+pic('portrait')+'<div id="photo"></div></div>'+card(f.name,'<p>'+c.name+' · '+status(f)+' · 底薪 '+f.wage+' 金</p><p>'+f.wins+' 胜 '+f.losses+' 负 · 排名积分 '+f.rank+'</p><p>训练等级 '+f.level+' · 专训 '+f.mastery+' · 招牌技 '+c.skill+'</p><p>装备：'+(GEAR[f.gear]?.name||'基础装备')+'</p>','manage')+'</div>';
+ for(const g of state.team)$('pick').add(new Option(g.name+' · '+CLASSES[g.job].name,g.id));$('pick').value=f.id;$('pick').onchange=()=>{selected=$('pick').value;render()};
+ model('portrait',f);add('photo','旋转',()=>{angle+=.65;model('portrait',f)});add('photo','保存肖像 PNG',()=>portrait('portrait',f));
+ function train(spec){const price=spec?22:14;state.gold-=price;f[spec?'mastery':'level']++;f.trained=state.week;f.ready=state.week+1;commit('训练完成，本周休赛。')}
+ const full=state.team.filter(g=>g.trained===state.week).length>=(state.facilities.yard?2:1);
+ add('manage','基础训练 · 14 金（本周休赛）',()=>train(false),!ready(f)||full||state.gold<14);
+ if(state.facilities.coach)add('manage','招牌技专训 · 22 金',()=>train(true),!ready(f)||full||state.gold<22);
+ for(const k of new Set(state.stock))add('manage','装备'+GEAR[k].name,()=>{state.stock.splice(state.stock.indexOf(k),1);if(f.gear)state.stock.push(f.gear);f.gear=k;commit('装备已更换。')});
+ if(f.gear)add('manage','卸下装备',()=>{state.stock.push(f.gear);f.gear=null;commit()});
+}
+function market(){
+ $('view').innerHTML='<h2>签约市场</h2><p class="muted">每周更新候选人。签约当日即可出赛，底薪从本周起计。</p><div class="grid">'+state.market.map((f,i)=>card(f.name,pic('m'+i)+'<p>'+CLASSES[f.job].name+' · '+CLASSES[f.job].skill+' · 周薪 '+f.wage+' 金</p>','sign'+i)).join('')+'</div><div class="panel"><h3>自建角斗士</h3><label>擂台名 <input id="name" maxlength="16" placeholder="输入称号"></label><label>职业 <select id="class"></select></label><div id="custom"></div></div>';
+ state.market.forEach((f,i)=>{model('m'+i,f);add('sign'+i,'签约 · '+fee(f)+' 金',()=>{state.gold-=fee(f);state.market.splice(i,1);while(state.team.some(g=>g.id===f.id))f.id+='x';state.team.push(f);selected=f.id;page='角斗士';commit('已签约。')},state.gold<fee(f))});
+ for(const [k,v] of Object.entries(CLASSES))$('class').add(new Option(v.name,k));
+ add('custom','生成试训形象',()=>{const f=recruit();f.job=$('class').value;f.name=$('name').value.trim()||f.name;state.market.unshift(f);commit('新形象已加入候选名单，可查看后签约。')});
+}
+function shop(){
+ $('view').innerHTML='<h2>装备铺</h2><div class="grid">'+Object.entries(GEAR).map(([k,g])=>card(g.name,'<p>'+g.desc+' · 库存 '+state.stock.filter(x=>x===k).length+'</p>','g'+k)).join('')+'</div><h2>训练馆升级</h2><div class="grid">'+Object.entries(FACILITIES).map(([k,g])=>card(g.name,'<p>'+g.desc+'</p><p>维护费 +'+g.fee+' 金 / 周</p>','u'+k)).join('')+'</div>';
+ for(const [k,g] of Object.entries(GEAR))add('g'+k,'购买 · '+g.cost+' 金',()=>{state.gold-=g.cost;state.stock.push(k);commit('已入库，到角斗士名册中装备。')},state.gold<g.cost);
+ for(const [k,g] of Object.entries(FACILITIES))add('u'+k,state.facilities[k]?'已启用':'升级 · '+g.cost+' 金',()=>{state.gold-=g.cost;state.facilities[k]=true;commit('场馆升级完成。')},state.facilities[k]||state.gold<g.cost);
+}
+function events(){
+ const list=offers(state);
+ $('view').innerHTML='<h2>本周比赛合同</h2><p class="muted">每名选手每周可打一场。出场费保底，获胜另有奖金。</p><div class="grid">'+list.map(o=>card(o.title,'<p>对手 · '+o.rival.name+' / '+CLASSES[o.rival.job].name+'</p><p>出场 '+o.purse+' 金 · 胜奖 '+o.bonus+' 金</p><small>需要排名积分 '+o.need+'</small><label><select aria-label="出赛选手" id="entry'+o.i+'"></select></label>','o'+o.i)).join('')+'</div>';
+ for(const o of list){const el=$('entry'+o.i),available=state.team.filter(f=>ready(f)&&f.rank>=o.need);for(const f of available)el.add(new Option(f.name,f.id));if(!available.length)el.add(new Option('无符合条件的选手',''));
+ const taken=state.taken.includes(o.i);add('o'+o.i,taken?'本周已接赛':'签约入场',()=>{fightStart(state,state.team.find(f=>f.id===el.value),o);page='比赛';commit()},taken||!available.length)}
+}
+function fightView(){
+ const b=state.fight;busy=false;
+ $('view').innerHTML='<div class="line"><h2>'+b.offer.title+'</h2><small>回合 '+b.round+' / 15</small></div><canvas class="scene" id="ring" width="960" height="340"></canvas><div class="meters">'+[b.a,b.b].map(p=>'<div><b>'+esc(p.name)+'</b> · '+p.hp+'/'+p.max+'<progress value="'+p.hp+'" max="'+p.max+'"></progress></div>').join('')+'</div><div class="panel"><strong>'+ (b.done?b.result:'场边指挥 · 剩余 '+b.calls+' 次')+'</strong><div id="orders"></div><small>'+ (b.done?'比赛收入已到账，战绩已保存。':'自动交手。压上可抢两格，退守可拉开并获得 +3 护甲。15 回合按剩余生命比例判定。')+'</small></div><ol class="log">'+b.log.slice(0,10).map(l=>'<li>'+esc(l)+'</li>').join('')+'</ol>';
+ const draw=(a,bpos,who,phase)=>paint($('ring'),[{f:b.a,pos:a,phase:who===b.a.id?phase:0},{f:b.b,pos:bpos,enemy:true,phase:who===b.b.id?phase:0}]);draw(b.a.pos,b.b.pos);
+ if(b.done){add('orders','返回角斗馆',()=>{state.fight=null;page='馆务';commit()});return}
+ function advance(order){
+ if(busy)return;busy=true;clearTimeout(timer);
+ const start={a:b.a.pos,b:b.b.pos}, motion=exchange(state,order);save();
+ const since=performance.now(),duration=600;
+ function frame(now){const elapsed=(now-since)/duration,i=Math.floor(elapsed);
+ if(i>=motion.length){render();return}
+ const prev=i?motion[i-1]:start,next=motion[i],t=elapsed-i;
+ const aPos=prev.a+(next.a-prev.a)*t, bPos=prev.b+(next.b-prev.b)*t;
+ draw(aPos,bPos,next.actor,t);
+ if(next.type!=='move'){
+ const canvas=$('ring'),ctx=canvas.getContext('2d'),actor=next.actor===b.a.id?b.a:b.b;
+ const scale=Math.min(canvas.width/9.4,canvas.height/3.6);
+ const px=pos=>canvas.width/2+(pos-3)*1.04*scale;
+ const from=px(actor===b.a?aPos:bPos),to=px(actor===b.a?bPos:aPos);
+ const y=canvas.height*.69-scale, travel=Math.min(1,t*1.6);
+ ctx.save();ctx.strokeStyle=actor.job==='mage'?'#a8f5ff':actor.job==='bow'?'#eee1ba':'#ffcd83';
+ ctx.lineWidth=actor.job==='bow'?3:5;ctx.beginPath();
+ ctx.moveTo(from+(to-from)*Math.max(0,travel-.20),y+5);
+ ctx.lineTo(from+(to-from)*travel,y-5);ctx.stroke();
+ if(t>.55){ctx.fillStyle=ctx.strokeStyle;ctx.font='bold 20px sans-serif';ctx.textAlign='center';ctx.fillText(next.type==='hit'?'命中':'闪避',to,y-scale*.95)}
+ ctx.restore();
+ }
+ animation=requestAnimationFrame(frame)}
+ animation=requestAnimationFrame(frame);
+ }
+ for(const order of ['压上','退守','观察'])add('orders',order,()=>advance(order),order!=='观察'&&b.calls<=0);
+ timer=setTimeout(()=>advance('观察'),3400);
+}
+render();save();
