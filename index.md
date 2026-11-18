@@ -5,7 +5,7 @@ layout: default
 <h2>Projects</h2>
 
 <ul>
-  <li><a href="/dnd-gladiator/">dnd角斗士</a> <small>项目已创建 · 玩法与设计待补充</small>
+  <li><a href="/dnd-gladiator/">dnd角斗士</a> <small>七格回合制角斗 · d20 战斗 · 随机角色肖像</small>
   <li><a href="/dnd-companion/">D&amp;D 系列创作</a> <small>系列 · 世界 · 多部故事与人物状态 · D&amp;D 5e 参考资料（附出处）· 本地保存与导出 · 附跑团工具</small></li>
   <li><a href="/ashen-crown/">ASHEN CROWN · 灰烬王冠</a> <small>原创暗黑奇幻 Hex 战棋 · 兽人 vs 精灵 · 战术 AI / 本地双人</small></li>
   <li><a href="/chess-tactics-trainer/">Chess Tactics Trainer · 国际象棋战术训练</a> <small>国际象棋战术训练 Web 应用</small></li>
