@@ -1,28 +1,11 @@
-// Content tables are shared by the manager, renderer and fight simulation.
-const CLASSES = {
-  guard: {name:'盾卫', hp:32, ac:15, range:1, die:8, skill:'盾震', color:'#397b78'},
-  bow: {name:'游侠', hp:24, ac:13, range:3, die:6, skill:'穿甲箭', color:'#688357'},
-  mage: {name:'霜法师', hp:21, ac:12, range:3, die:8, skill:'霜缚', color:'#70618b'}
-};
-const GEAR = {
-  blade:{name:'精制武具',cost:42,desc:'每次命中多造成 2 点伤害'},
-  plate:{name:'护心甲',cost:38,desc:'护甲 +2'},
-  boots:{name:'疾行靴',cost:48,desc:'首回合可移动两格，免疫霜缚'}
-};
-const FACILITIES = {
-  yard:{name:'第二练武场',cost:72,fee:4,desc:'每周训练名额从 1 人增至 2 人'},
-  clinic:{name:'医务室',cost:65,fee:3,desc:'新产生的伤停缩短一周'},
-  coach:{name:'专项教练席',cost:85,fee:5,desc:'解锁招牌技专训，强化技能伤害'}
-};
-const RIVALS=[
- ['铁栅','guard'],['鸦羽','bow'],['白榛','mage'],['黑鹫','bow'],['铜牙','guard'],['蓝烬','mage']
-];
-const NAMES=['白棘','石榴','灰雀','铜铃','寒杉','苔刃','野蜂','赤桦','银鲈','铁橡','冬鸦','红砂'];
+import { CLASSES } from './content/classes.js';
+import { GEAR, FACILITIES, RIVALS, NAMES } from './content/league.js';
+import { applyEffects } from './content/effects.js';
 const roll=n=>1+Math.floor(Math.random()*n);
 function fighter(name,job,seed=roll(999999),rank=0){
  return {id:'g'+seed,name,job,seed,rank,wins:0,losses:0,level:0,mastery:0,wage:7+rank*2,ready:1,trained:0,gear:null};
 }
-function recruit(){const seed=roll(999999);return fighter(NAMES[seed%NAMES.length],Object.keys(CLASSES)[roll(3)-1],seed,roll(3)-1)}
+function recruit(){const seed=roll(999999);return fighter(NAMES[seed%NAMES.length],Object.keys(CLASSES)[roll(Object.keys(CLASSES).length)-1],seed,roll(3)-1)}
 function fee(f){return 35+f.rank*12}
 function upkeep(s){return 10+Object.keys(s.facilities).reduce((n,k)=>n+FACILITIES[k].fee,0)+s.team.reduce((n,f)=>n+f.wage,0)}
 function fresh(){return {version:2,week:1,gold:140,team:[fighter('铜牙新秀','guard',4731),fighter('暮羽','bow',6582)],market:[recruit(),recruit(),recruit()],facilities:{},stock:[],taken:[],history:[],fight:null,crown:false}}
@@ -35,7 +18,7 @@ function offers(s){
  return {i,title,rival,purse:[18,32,65][i],bonus:[15,26,55][i],need:[0,1,4][i]};
  });
 }
-function contender(f,pos){const c=CLASSES[f.job];const max=c.hp+f.level*2;return {...f,pos,hp:max,max,ac:c.ac+(f.gear==='plate'?2:0),cd:0,frozen:false}}
+function contender(f,pos){const c=CLASSES[f.job];const max=c.hp+f.level*2;return {...f,pos,hp:max,max,ac:c.ac+(GEAR[f.gear]?.armor || 0),cd:0,frozen:false}}
 function fightStart(s,f,o){
  s.taken.push(o.i);f.ready=s.week+1;
  s.fight={a:contender(f,1),b:contender(o.rival,5),offer:o,round:1,calls:3,log:['裁判挥旗，比赛开始。'],done:false};
@@ -45,20 +28,19 @@ function act(p,q,order,round){
  let dist=Math.abs(p.pos-q.pos), move=0;
  if(!p.frozen){
  if(order==='退守')move=-direction;
- else if(dist>c.range||order==='压上'&&dist>1)move=direction*Math.min(dist-1,(order==='压上'||round===1&&p.gear==='boots')?2:1);
+ else if(dist>c.range||order==='压上'&&dist>1)move=direction*Math.min(dist-1,(order==='压上'||round===1&&GEAR[p.gear]?.openingStride)?2:1);
  }
  p.pos=Math.max(0,Math.min(6,p.pos+move));p.frozen=false;
  dist=Math.abs(q.pos-p.pos);p.cd=Math.max(0,p.cd-1);
  if(dist>c.range)return {text:p.name+'调整站位，尚未进入射程。',type:'move'};
- const special=p.cd===0, d=roll(20), bonus=4+Math.floor(p.level/2)+(special&&p.job==='bow'?3:0);
- if(special)p.cd=3;
+ const special=p.cd===0, d=roll(20), bonus=4+Math.floor(p.level/2)+(special ? c.accuracy || 0 : 0);
+ if(special)p.cd=c.cooldown;
  const label=special?c.skill:'普攻';
  if(d===1||d!==20&&d+bonus<q.ac+(q.guarding?3:0))return {text:p.name+'的'+label+'落空（d20 '+d+' + '+bonus+'）。',type:'miss'};
- const dmg=roll(c.die)+2+(d===20?roll(c.die):0)+(p.gear==='blade'?2:0)+(special?p.mastery*2:0);
+ const dmg=roll(c.die)+2+(d===20?roll(c.die):0)+(GEAR[p.gear]?.damage || 0)+(special?p.mastery*2:0);
  q.hp=Math.max(0,q.hp-dmg);
- if(special&&p.job==='guard')q.pos=Math.max(0,Math.min(6,q.pos+direction*2));
- if(special&&p.job==='mage'&&q.gear!=='boots')q.frozen=true;
- return {text:p.name+'使用'+label+'，'+(d===20?'暴击':'命中')+' −'+dmg+' HP（d20 '+d+'）。',type:'hit'};
+ const effects=special ? applyEffects(c.onHit,p,q) : [];
+ return {text:p.name+'使用'+label+'，'+(d===20?'暴击':'命中')+' −'+dmg+' HP（d20 '+d+'）'+(effects.length?' · '+effects.join('，'):'')+'。',type:'hit'};
 }
 function exchange(s,order='观察'){
  const b=s.fight;if(!b||b.done)return;
@@ -82,3 +64,5 @@ function exchange(s,order='观察'){
  }else b.round++;
  return events;
 }
+
+export { fresh, fighter, recruit, fee, upkeep, offers, fightStart, exchange, act, contender };

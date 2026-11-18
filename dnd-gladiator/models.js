@@ -1,5 +1,8 @@
+import { CLASSES } from './content/classes.js';
+import { GEAR } from './content/league.js';
+import { KITS } from './content/kits.js';
 // Meshes are generated in world space, lit per face and projected onto canvas.
-function paint(canvas, figures, scene=true, angle=0, time=0){
+export function paint(canvas, figures, scene=true, angle=0, time=0){
  const ctx=canvas.getContext('2d'),w=canvas.width,h=canvas.height;
  const scale=scene?Math.min(w/9.4,h/3.6):h/2.7, faces=[];
  const bg=ctx.createLinearGradient(0,0,0,h);bg.addColorStop(0,'#142525');bg.addColorStop(.63,'#776650');bg.addColorStop(1,'#3b302a');
@@ -41,24 +44,14 @@ function paint(canvas, figures, scene=true, angle=0, time=0){
  part(side*.14,.16,side*gait*.08,.10,.11,.48,'#5b5348',6,1.2);
  }
  part(0,.56,0,.31,.21,.36,cloth,8,.77);
- part(0,.90,0,.245,.18,.36,f.gear==='plate'?'#bbc7bf':cloth,8,1.32);
+ part(0,.90,0,.245,.18,.36,GEAR[f.gear]?.material || cloth,8,1.32);
  part(0,.86,0,.26,.19,.08,'#75543a');part(0,1.25,0,.108,.10,.17,skin);
  part(0,1.39,0,.19,.16,.27,skin,8,1.06);part(0,1.61,-.01,.20,.17,.12,hair,8,.85);
  for(const side of [-1,1]){
- part(side*.32,1.12,0,.145,.14,.17,f.job==='guard'?'#9faea3':cloth);
+ part(side*.32,1.12,0,.145,.14,.17,CLASSES[f.job].kit==='shield'?'#9faea3':cloth);
  part(side*.34,.87,.04,.085,.10,.27,skin,6,1.12);part(side*.34,.81,.07,.10,.10,.11,'#674f3d');
  }
- if(f.job==='guard'){
- part(0,1.59,0,.22,.18,.15,'#9aab9e',8,.78);part(0,1.72,0,.055,.15,.14,'#a64c38');
- part(-.37,.69,.17,.22,.09,.51,'#557777',6,.85);
- part(.39,.84,.14,.12,.05,.045,'#cbac62');part(.39,.89,.14,.05,.035,.57,'#ced0bd',4,.16,facing*gait*.40);
- }else if(f.job==='mage'){
- part(0,1.66,0,.27,.23,.08,cloth);part(0,1.73,0,.18,.16,.30,cloth,7,.04);
- part(.39,.08,.13,.035,.035,1.44,'#886347');part(.39,1.51,.13,.09,.08,.21,'#9dd5d4',5,.2);
- }else{
- part(0,1.58,-.04,.21,.18,.23,cloth,7,.55);
- for(let i=0;i<7;i++)part(.34,.52+i*.13,.12+.15*Math.sin(Math.PI*i/6),.032,.035,.15,'#c59b6b');
- }
+ KITS[CLASSES[f.job].kit](part,{cloth,facing,gait});
  }
  faces.sort((a,b)=>a.depth-b.depth);
  for(const face of faces){ctx.beginPath();face.points.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.closePath();ctx.fillStyle=face.fill;ctx.fill()}
